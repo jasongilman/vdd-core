@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>vdd-core : clj-wamp example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>clj-wamp example</h1>
+
+        <p>Open your console to watch the WebSocket events being sent and received.</p>
+
+        <p class="row">
+            <button id="chat-btn" class="btn btn-large span6">PubSub: Chat message</button>
+        </p>
+        <p class="row">
+            <button id="echo-btn" class="btn btn-large span6">RPC: Echo message</button>
+        </p>
+        <p class="row">
+            <button id="throw-btn" class="btn btn-large span6">RPC: Throw error</button>
+        </p>
+    </div>
+
+<script src="//code.jquery.com/jquery-2.0.0.min.js"></script>
+<script src="//autobahn.s3.amazonaws.com/js/autobahn.min.js"></script>
+<script>
+    var WS_URI = 'ws://localhost:8080/ws';
+    var BASE_TOPIC_URI = "http://vdd-core/";
+    var sess;
+
+    // Connect to WebSocket
+    ab.connect(
+        WS_URI,
+        // Connection callback
+        function (session) {
+            sess = session;
+            console.log("Connected to " + WS_URI, sess.sessionid());
+            sess.prefix("event", BASE_TOPIC_URI + "event#"); // Add CURI prefixes
+            sess.prefix("rpc",   BASE_TOPIC_URI + "rpc#");
+            sess.subscribe("event:chat", onChatEvent);       // Subscribe to chat channel
+        },
+        // Disconnection callback
+        function (code, reason) {
+            sess = null;
+            if (code != 0) {  // ignore app disconnects
+                console.log("Connection lost (" + reason + ")");
+            }
+        },
+        // Options
+        {'maxRetries': 60, 'retryDelay': 30000}
+    );
+
+    function onChatEvent(topic, event) {
+        console.log("event:chat RECEIVED", event);
+    }
+
+    $('#chat-btn').click(function() {
+        sess.publish("event:chat", "foo");
+        console.log("event:chat SENT 'foo'");
+    });
+
+    $('#echo-btn').click(function() {
+        sess.call("rpc:echo", 'test').then(
+            function (res) { console.log("rpc:echo RECEIVED success", res); },
+            function (res) { console.log("rpc:echo RECEIVED error", res); }
+        );
+        console.log("rpc:echo SENT 'test'");
+    });
+
+    $('#throw-btn').click(function() {
+        sess.call("rpc:throw").then(
+            function (res) { console.log("rpc:throw RECEIVED success", res); },
+            function (res) { console.log("rpc:throw RECEIVED error", res); }
+        );
+        console.log("rpc:throw SENT");
+    });
+
+</script>
+</body>
+</html>
