@@ -1,5 +1,4 @@
 (ns vdd-core.websocket
-  (:use [vdd-core.config :only [conf]])
   (:require [clojure.tools.logging :as log]
             [org.httpkit.server :as http-kit]
             [clj-wamp.server :as wamp]))
@@ -29,8 +28,8 @@
 
 (defn wamp-handler
   "Returns a http-kit websocket handler with wamp subprotocol"
-  [req]
-  (wamp/with-channel-validation req channel (:ws-origins-re (conf))
+  [config req]
+  (wamp/with-channel-validation req channel (:ws-origins-re config)
     (wamp/http-kit-handler channel
       {:on-open        on-open
        :on-close       on-close
