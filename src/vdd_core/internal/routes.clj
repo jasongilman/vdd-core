@@ -1,9 +1,9 @@
-(ns vdd-core.routes
+(ns vdd-core.internal.routes
   (:use [compojure.core :only [defroutes GET]]
         (ring.middleware [keyword-params :only [wrap-keyword-params]]
                          [params :only [wrap-params]]
                          [session :only [wrap-session]])
-        [vdd-core.websocket :only [wamp-handler]])
+        [vdd-core.internal.websocket :only [wamp-handler]])
   (:require [compojure.route :as route]
             [clojure.tools.logging :as log]))
 
@@ -13,6 +13,7 @@
     (GET "/ws" [:as req] (wamp-handler config req))
     ;; static files under ./resources/public folder
     (route/resources "/")
+    (route/files "/viz" {:root "viz"})
     ;; 404, modify for a better 404 page
     (route/not-found "<p>Page not found.</p>")))
   

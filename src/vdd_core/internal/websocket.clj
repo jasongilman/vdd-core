@@ -1,4 +1,4 @@
-(ns vdd-core.websocket
+(ns vdd-core.internal.websocket
   (:require [clojure.tools.logging :as log]
             [org.httpkit.server :as http-kit]
             [clj-wamp.server :as wamp]))
@@ -36,8 +36,8 @@
        :on-call        {(rpc-url "echo")  identity
                         (rpc-url "throw") (fn [] (throw (Exception. "An exception")))
                         :on-before        on-before-call}
-       :on-subscribe   {(evt-url "chat")  true}
-       :on-publish     {(evt-url "chat")  true
+       :on-subscribe   {(evt-url "vizdata")  true}
+       :on-publish     {(evt-url "vizdata")  true
                         :on-after         on-publish}})))
 
 

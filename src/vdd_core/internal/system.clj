@@ -1,8 +1,8 @@
-(ns vdd-core.system
+(ns vdd-core.internal.system
   (:require [org.httpkit.server :as httpkit]
             [ring.middleware.reload :as ring-reload]
             [clojure.java.io :as io]
-            [vdd-core.routes :as routes])
+            [vdd-core.internal.routes :as routes])
   (:use [clojure.tools.logging :only [info]]))
 
 (defn- stop-server [server]
@@ -20,17 +20,17 @@
     (info "server started. listen on" (:ip http-config) "@" (:port http-config))
     server))
 
-(defn- read-conf
-  "returns a parsed application config.clj from a resource directory"
-  []
-  (let [path (io/resource "config.clj")]
-    (info "Reading configuration from" path)
-    (read-string (slurp path))))
+(def config
+  {:hot-reload    true
+   :http-kit      {:ip     "0.0.0.0"
+                   :port   8080
+                   :thread 4}
+   :ws-origins-re #"https?://localhost:8080"})
 
 (defn system
   "Returns a new instance of the whole application."
   []
-  {:config (read-conf)
+  {:config config
    :server nil})
 
 (defn start

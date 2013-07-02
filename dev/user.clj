@@ -1,7 +1,7 @@
 (ns user
   (:require [clojure.pprint :refer (pprint pp)]
             [clojure.tools.namespace.repl :refer (refresh refresh-all)]
-            [vdd-core.system :as system]))
+            [vdd-core.internal.system :as system]))
 
 ; See http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded 
 ; for information on why this file is setup this way
