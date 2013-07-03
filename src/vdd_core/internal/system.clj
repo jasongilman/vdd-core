@@ -12,24 +12,19 @@
     (server))) 
 
 (defn- start-server [config]
-  (let [the-app (if (:hot-reload config) 
-                  (ring-reload/wrap-reload (routes/app config)) 
-                  (routes/app config))
-        http-config (:http-kit config)
+  (let [http-config {:ip "0.0.0.0"
+                     :port (:port config)
+                     :thread 2}
+        the-app (ring-reload/wrap-reload (routes/app config)) 
         server (httpkit/run-server the-app http-config)]
     (info "server started. listen on" (:ip http-config) "@" (:port http-config))
     server))
 
-(def config
-  {:hot-reload    true
-   :http-kit      {:ip     "0.0.0.0"
-                   :port   8080
-                   :thread 4}
-   :ws-origins-re #"https?://localhost:8080"})
-
 (defn system
   "Returns a new instance of the whole application."
-  []
+  [config]
+  {:pre [(:port config)
+         (:viz-root config)]}
   {:config config
    :server nil})
 

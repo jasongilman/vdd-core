@@ -1,4 +1,4 @@
-(ns vdd-core.internal.websocket
+(ns vdd-core.internal.wamp-handler
   (:require [clojure.tools.logging :as log]
             [org.httpkit.server :as http-kit]
             [clj-wamp.server :as wamp]))
@@ -26,18 +26,19 @@
   (log/info "WAMP call:" sess-id topic call-id call-params)
   [sess-id topic call-id call-params])
 
-(defn wamp-handler
+(defn handler
   "Returns a http-kit websocket handler with wamp subprotocol"
   [config req]
-  (wamp/with-channel-validation req channel (:ws-origins-re config)
-    (wamp/http-kit-handler channel
-      {:on-open        on-open
-       :on-close       on-close
-       :on-call        {(rpc-url "echo")  identity
-                        (rpc-url "throw") (fn [] (throw (Exception. "An exception")))
-                        :on-before        on-before-call}
-       :on-subscribe   {(evt-url "vizdata")  true}
-       :on-publish     {(evt-url "vizdata")  true
-                        :on-after         on-publish}})))
+  (let [ws-origins-re (re-pattern (str "http://localhost:" (:port config)))]
+    (wamp/with-channel-validation req channel ws-origins-re
+      (wamp/http-kit-handler channel
+        {:on-open        on-open
+         :on-close       on-close
+         :on-call        {(rpc-url "echo")  identity
+                          (rpc-url "throw") (fn [] (throw (Exception. "An exception")))
+                          :on-before        on-before-call}
+         :on-subscribe   {(evt-url "vizdata")  true}
+         :on-publish     {(evt-url "vizdata")  true
+                          :on-after         on-publish}}))))
 
 
