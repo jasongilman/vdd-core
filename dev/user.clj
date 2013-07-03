@@ -1,5 +1,6 @@
 (ns user
   (:require [clojure.pprint :refer (pprint pp)]
+            [clojure.test :refer (run-all-tests)]
             [clojure.tools.namespace.repl :refer (refresh refresh-all)]
             [vdd-core.internal.system :as system]
             [vdd-core.core :as core]))

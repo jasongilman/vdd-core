@@ -1,6 +1,7 @@
 (ns vdd-core.core
   (:require [vdd-core.internal.system :as vsystem]
             [clj-wamp.server :as wamp]
+            [clojure.tools.logging :as log]
             [vdd-core.internal.wamp-handler :as wamp-handler]))
 
 (defn config 
@@ -16,11 +17,13 @@
   ([] 
    (start-viz (config)))
   ([config]
-   (vsystem/start (vsystem/system))))
+   (log/info "Viz Server Starting")
+   (vsystem/start (vsystem/system config))))
 
 (defn stop-viz
   "Stops the visualization server"
   [server] 
+  (log/info "Viz Server Stopping")
   (vsystem/stop server))
 
 (defn data->viz

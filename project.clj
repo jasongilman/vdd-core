@@ -14,4 +14,5 @@
                  [http-kit "2.1.2"]
                  [clj-wamp "1.0.0-beta3"]]
   :profiles {:dev {:source-paths ["dev"]
-                   :dependencies [[org.clojure/tools.namespace "0.2.3"]]}})
+                   :dependencies [[org.clojure/tools.namespace "0.2.3"]
+                                  [clj-http "0.7.4"]]}})

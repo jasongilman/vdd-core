@@ -14,16 +14,16 @@
 ;; HTTP Kit/WAMP WebSocket handler
 
 (defn- on-open [sess-id]
-  (log/info "WAMP client connected [" sess-id "]"))
+  (log/debug "WAMP client connected [" sess-id "]"))
 
 (defn- on-close [sess-id status]
-  (log/info "WAMP client disconnected [" sess-id "] " status))
+  (log/debug "WAMP client disconnected [" sess-id "] " status))
 
 (defn- on-publish [sess-id topic event exclude include]
-  (log/info "WAMP publish:" sess-id topic event exclude include))
+  (log/debug "WAMP publish:" sess-id topic event exclude include))
 
 (defn- on-before-call [sess-id topic call-id call-params]
-  (log/info "WAMP call:" sess-id topic call-id call-params)
+  (log/debug "WAMP call:" sess-id topic call-id call-params)
   [sess-id topic call-id call-params])
 
 (defn handler
