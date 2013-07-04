@@ -2,3 +2,6 @@
 .lein-repl-history
 pom.xml
 .lein-failures
+
+# Compiled clojurescript
+/resources/public/vdd/vdd-core.js

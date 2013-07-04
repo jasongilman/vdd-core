@@ -13,6 +13,17 @@
                  [ring-server "0.2.8"]
                  [http-kit "2.1.2"]
                  [clj-wamp "1.0.0-beta3"]]
+  :plugins [[lein-cljsbuild "0.3.2"]]
+  :hooks [leiningen.cljsbuild]
+  
+  :source-paths ["src/clj"]
+  
   :profiles {:dev {:source-paths ["dev"]
                    :dependencies [[org.clojure/tools.namespace "0.2.3"]
-                                  [clj-http "0.7.4"]]}})
+                                  [clj-http "0.7.4"]]}}
+  
+  :cljsbuild {:builds {:main {:source-paths ["src/cljs"]
+                              :compiler {:output-to "resources/public/vdd/vdd-core.js"
+                                         :optimizations :whitespace
+                                         :pretty-print true}
+                              :jar true}}})
