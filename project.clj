@@ -12,9 +12,13 @@
                  [compojure "1.1.5"]
                  [ring-server "0.2.8"]
                  [http-kit "2.1.2"]
-                 [clj-wamp "1.0.0-beta3"]]
+                 [clj-wamp "1.0.0-beta3"]
+                 [jayq "2.4.0"]]
   :plugins [[lein-cljsbuild "0.3.2"]]
-  :hooks [leiningen.cljsbuild]
+  
+  ; Commented out to increase repl startup speed
+  ; Use lein cljsbuild auto (or once) to compile
+  ; :hooks [leiningen.cljsbuild]
   
   :source-paths ["src/clj"]
   

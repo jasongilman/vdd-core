@@ -1,10 +1,9 @@
-(ns vdd.wamp)
+(ns vdd.wamp
+  (:use [vdd.util :only [log]]))
+
 
 (def base-topic-uri "http://vdd-core/")
 (def connect-options {:maxRetries 60 :retryDelay 30000})
-
-(defn log [str]
-  (.log js/console str))
 
 (defn- connection-handler 
   "Handles connection callbacks. Sets up the vizdata-handler as the function that is called

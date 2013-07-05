@@ -5,3 +5,7 @@ pom.xml
 
 # Compiled clojurescript
 /resources/public/vdd/vdd-core.js
+
+# Other clojurescript stuff
+/out
+/repl
