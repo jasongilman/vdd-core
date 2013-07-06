@@ -11,7 +11,7 @@
 ;; define mapping here
 (defn make-routes [config]
   (routes
-    (GET "/index.html" [] (views/list-views config))
+    (GET "/index.html" [] (views/list-views-page config))
     (GET "/ws" [:as req] (wamp-handler/handler config req))
     ;; static files under ./resources/public folder
     (route/resources "/")
