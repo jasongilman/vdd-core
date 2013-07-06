@@ -1,5 +1,6 @@
 (ns vdd-core.internal.views
   (:use [hiccup.core]
+        [hiccup.element :only [javascript-tag]]
         [hiccup.page :only [html5 include-css include-js]]))
 
 (defn- navbar 
@@ -43,43 +44,53 @@
      [:meta {:name "viewport" 
              :content "width=device-width, initial-scale=1.0"}]
      (include-css "/bootstrap/css/bootstrap.min.css" 
+                  ; Included before bootstrap-responsive because we want it
+                  ; to override the body padding top and bottom styles in smaller pages
+                  "/vdd/vdd.css"
                   "/bootstrap/css/bootstrap-responsive.min.css" 
-                  "/vdd/vdd.css")]
+                  )]
     [:body 
      (navbar vizs)
-     [:div.container contents]
+     [:div.container 
+      contents
+      [:hr]
+      [:footer [:p "&copy; Jason Gilman 2013"]]]
      (include-js "/jquery/jquery.min.js"
                  "/bootstrap/js/bootstrap.min.js"
                  "/autobahn/autobahn.min.js"
                  "/vdd/vdd-core.js")]))
 
-(defn find-visualizations-in-viz-root
+(defn- project-visualizations
   "Finds the visualizations available in the configured :viz-root."
   [config]
   (let [viz-root (:viz-root config)]
+    ; Look in viz-root ...
     (->> viz-root
          clojure.java.io/file 
+         ; ... for all directories (recursively)
          file-seq 
          (map str)
+         ; ... that contain an index.html.
          (filter #(re-seq #"/index.html$" %))
+         ; Get the directory name
          (map #(-> (str viz-root "/(.*)/index.html$")
                    re-pattern
                    (re-matches %)
                    last))
+         ; Return the path and title of the visualizations
          (map (fn [viz] {:path (format "/viz/%s" viz) 
                       :title viz})))))
 
-(defn visualizations [config]
-  {:built-in [{:path "/vdd/data.html" :title "Data Viewer"}]
-   :project (find-visualizations-in-viz-root config)})
+(defn- visualizations [config]
+  {:built-in [{:path "/built-in/data-viewer" :title "Data Viewer"}]
+   :project (project-visualizations config)})
 
 (defn list-views-page
   "Returns a page containing the visualizations available"
   [config]
   (let [vizs (visualizations config)
         viz-link-fn (fn [{path :path title :title}]
-                      [:p.row 
-                       [:a.btn.btn-large.span5 {:href path} title]])]
+                       [:a.btn.btn-large.span5 {:href path} title])]
     (vdd-page 
       "Visualization Driven Development - Core"
       vizs
@@ -87,10 +98,28 @@
        [:h1 "Visualization Driven Development"]
        [:p "TODO description here"]]
       
-      [:h3 "Built In Visualizations"]
-      (for [viz (:built-in vizs)]
-        (viz-link-fn viz))
-      
-      [:h3 "Project Visualizations"]
-      (for [viz (:project vizs)]
-        (viz-link-fn viz)))))
+      [:div.row
+       [:div.span6
+        [:h3 "Built In Visualizations"]
+        (for [viz (:built-in vizs)]
+          (viz-link-fn viz))]
+       
+       [:div.span6
+        [:h3 "Project Visualizations"]
+        (for [viz (:project vizs)]
+          (viz-link-fn viz))]])))
+
+(defn data-viewer-page
+  "Returns a visualization page that allows arbitrary data to be viewed"
+  [config]
+  (let [vizs (visualizations config)]
+    (vdd-page 
+      "VDD - Data Viewer"
+      vizs
+      [:h1 "Data Viewer"]
+      [:p "TODO some text here describing the data viewer and that it allows you to show arbitrary data in the browser."]
+      [:p "TODO some code here showing an example"]
+      [:div#target]
+      (javascript-tag "$(function() { 
+                      vdd.data.enableDataView($('div#target')); 
+                      });"))))
