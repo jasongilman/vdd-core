@@ -5,18 +5,19 @@
                          [session :only [wrap-session]]))
   (:require [compojure.route :as route]
             [vdd-core.internal.wamp-handler :as wamp-handler]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [vdd-core.internal.views :as views]))
 
 ;; define mapping here
 (defn make-routes [config]
   (routes
+    (GET "/index.html" [] (views/list-views config))
     (GET "/ws" [:as req] (wamp-handler/handler config req))
     ;; static files under ./resources/public folder
     (route/resources "/")
     (route/files "/viz" {:root (:viz-root config)})
     ;; 404, modify for a better 404 page
     (route/not-found "<p>Page not found.</p>")))
-  
 
 (defn wrap-failsafe [handler]
   (fn [req]

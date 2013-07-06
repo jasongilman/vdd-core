@@ -13,7 +13,8 @@
                  [ring-server "0.2.8"]
                  [http-kit "2.1.2"]
                  [clj-wamp "1.0.0-beta3"]
-                 [jayq "2.4.0"]]
+                 [jayq "2.4.0"]
+                 [hiccup "1.0.3"]]
   :plugins [[lein-cljsbuild "0.3.2"]]
   
   ; Commented out to increase repl startup speed
