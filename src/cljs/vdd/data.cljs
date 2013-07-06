@@ -7,12 +7,12 @@
   "Defines a method for converting from generic data to HTML structures"
   (data->html [data] "Converts the data to html"))
 
+(def target-element (atom nil))
+
 (defn visualize-data 
   "Callback for visualizing data "
   [topic data]
   (.html @target-element (data->html (js->clj data))))
-
-(def target-element (atom nil))
 
 (defn ^:export enableDataView
   "Enables viewing on an element. When data is received for viewing it will be displayed in the given target."
