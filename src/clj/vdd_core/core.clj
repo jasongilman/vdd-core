@@ -10,7 +10,11 @@
   ; The port the visualization server will run on
   {:port 8080
    ; The directory in your project that custom visualizations will be found in.
-   :viz-root "viz"})
+   :viz-root "viz"
+   ; Log configuration options
+   :log {:level :debug  ; The level to log out
+         :file "log/vdd-core.log" ; The path to the file to log to
+         :stdout-enabled true}}) ; Whether or not to log to standard out
 
 (defn start-viz
   "Starts the visualization server and returns an instance of it."

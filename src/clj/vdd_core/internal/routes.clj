@@ -5,7 +5,8 @@
                          [session :only [wrap-session]]))
   (:require [compojure.route :as route]
             [vdd-core.internal.wamp-handler :as wamp-handler]
-            [clojure.tools.logging :as log]
+            [taoensso.timbre :as timbre
+                      :refer (trace debug info warn error fatal spy)]
             [vdd-core.internal.views :as views]))
 
 ;; define mapping here
@@ -35,7 +36,7 @@
   (fn [req]
     (try (handler req)
       (catch Exception e
-        (log/error e "error handling request" req)
+        (error e "error handling request" req)
         ;; FIXME provide a better page for 500 here
         {:status 500 :body "Sorry, an error occured."}))))
 

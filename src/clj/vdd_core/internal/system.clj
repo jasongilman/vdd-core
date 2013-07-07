@@ -2,8 +2,9 @@
   (:require [org.httpkit.server :as httpkit]
             [ring.middleware.reload :as ring-reload]
             [clojure.java.io :as io]
-            [vdd-core.internal.routes :as routes])
-  (:use [clojure.tools.logging :only [info]]))
+            [vdd-core.internal.routes :as routes]
+            [taoensso.timbre :as timbre
+             :refer (trace debug info warn error fatal spy)]))
 
 (defn- stop-server [server]
   (when-not (nil? server)
@@ -28,10 +29,25 @@
   {:config config
    :server nil})
 
+(defn- setup-logging [config]
+  (let [log-config (:log config)]
+    (timbre/set-level! (or (:level log-config) :warn))
+    (timbre/set-config! [:timestamp-pattern] "yyyy-MM-dd HH:mm:ss")
+    
+    ; Enable file logging
+    (timbre/set-config! [:appenders :spit :enabled?] true)
+    (timbre/set-config! [:shared-appender-config :spit-filename] 
+                        (:file log-config))
+    
+    ; Enable/disable stdout logs
+    (timbre/set-config! [:appenders :standard-out :enabled?] 
+                        (:stdout-enabled log-config))))
+
 (defn start
   "Performs side effects to initialize the system, acquire resources,
   and start it running. Returns an updated instance of the system."
   [system]
+  (setup-logging (:config system))
   (assoc-in system [:server] (start-server (:config system))))
 
 (defn stop

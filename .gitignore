@@ -3,6 +3,8 @@
 pom.xml
 .lein-failures
 
+/log/*.log
+
 # Compiled clojurescript
 /resources/public/vdd/vdd-core.js
 
