@@ -48,11 +48,13 @@
   and start it running. Returns an updated instance of the system."
   [system]
   (setup-logging (:config system))
+  (info "Viz Server Starting")
   (assoc-in system [:server] (start-server (:config system))))
 
 (defn stop
   "Performs side effects to shut down the system and release its
   resources. Returns an updated instance of the system."
   [system]
+  (info "Viz Server Stopping")
   (stop-server (:server system))
   (assoc system :server nil))

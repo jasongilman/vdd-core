@@ -3,11 +3,19 @@
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
+  
+  :main vdd-core.main
+  
+  ; Compiled ahead of time
+  :aot [vdd-core.main]
+  
+  ; TODO look for more exclusions to reduce the size of the uberjar created
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [com.taoensso/timbre "2.1.2"]
                  [compojure "1.1.5"]
-                 [ring-server "0.2.8"]
+                 [ring-server "0.2.8" :exclusions [ring/ring-jetty-adapter]]
                  [http-kit "2.1.2"]
+                 [cheshire "5.2.0"]
                  [clj-wamp "1.0.0-beta3"]
                  [jayq "2.4.0"]
                  [hiccup "1.0.3"]]
@@ -19,6 +27,7 @@
   
   :source-paths ["src/clj"]
   
+  :repl-options {:init-ns user}
   :profiles {:dev {:source-paths ["dev"]
                    :dependencies [[org.clojure/tools.namespace "0.2.3"]
                                   [clj-http "0.7.4"]]}}

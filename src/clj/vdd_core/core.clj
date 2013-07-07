@@ -1,7 +1,8 @@
 (ns vdd-core.core
   (:require [vdd-core.internal.system :as vsystem]
             [clj-wamp.server :as wamp]
-            [clojure.tools.logging :as log]
+            [taoensso.timbre :as timbre
+             :refer (trace debug info warn error fatal spy)]
             [vdd-core.internal.wamp-handler :as wamp-handler]))
 
 (defn config 
@@ -21,14 +22,13 @@
   ([] 
    (start-viz (config)))
   ([config]
-   (log/info "Viz Server Starting")
    (vsystem/start (vsystem/system config))))
 
 (defn stop-viz
   "Stops the visualization server"
   [server] 
-  (log/info "Viz Server Stopping")
-  (vsystem/stop server))
+  (vsystem/stop server)
+  nil)
 
 (defn data->viz
   "Sends the captured data to the visualization on the specified channel"
