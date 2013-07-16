@@ -90,7 +90,8 @@
                       :title viz})))))
 
 (defn- visualizations [config]
-  {:built-in [{:path "/built-in/data-viewer" :title "Data Viewer"}]
+  {:built-in [{:path "/built-in/data-viewer" :title "Data Viewer"}
+              {:path "/built-in/player-test" :title "Player Test"}]
    :project (project-visualizations config)})
 
 (defn list-views-page
@@ -129,3 +130,16 @@
               :javascripts [(javascript-tag "$(function() { 
                                             vdd.data.enableDataView($('div#target')); 
                                             });")])))
+
+(defn player-test-page
+  "Creates a temporary page for testing the player component"
+  [config]
+  (let [vizs (visualizations config)]
+    (vdd-page :title "VDD - Player Test Page"
+              :vizs vizs
+              :content [:div.container
+                        [:h1 "Player test"]
+                        [:p#target "testing"]
+                        [:div#player]]
+              :javascripts [(include-js "/vdd/player-test.js")])))
+

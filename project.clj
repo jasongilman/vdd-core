@@ -17,8 +17,11 @@
                  [http-kit "2.1.6"]
                  [cheshire "5.2.0"]
                  [clj-wamp "1.0.0-rc1"]
+                 [hiccup "1.0.3"]
+                 
+                 ; Clojurescript
                  [jayq "2.4.0"]
-                 [hiccup "1.0.3"]]
+                 [hiccups "0.2.0"]]
   :plugins [[lein-cljsbuild "0.3.2"]]
   
   ; Commented out to increase repl startup speed

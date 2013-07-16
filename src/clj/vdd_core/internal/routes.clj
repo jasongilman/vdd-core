@@ -21,6 +21,7 @@
     ; Built in visualizations
     (context "/built-in" [] 
              (routes 
+               (GET "/player-test" [] (views/player-test-page config))
                (GET "/data-viewer" [] (views/data-viewer-page config))))
              
     ;; static files under ./resources/public folder
