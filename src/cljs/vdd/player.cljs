@@ -7,10 +7,12 @@
 (def player-control 
   (hiccups/html [:div.btn-toolbar 
          [:div.btn-group
+          [:a.btn.first {:href "#"}[:i.icon-step-backward]]
           [:a.btn.back {:href "#"}[:i.icon-backward]]
           [:a.btn.play {:href "#"}[:i.icon-play]]
           [:a.btn.pause {:href "#"}[:i.icon-pause]]
-          [:a.btn.forward {:href "#"}[:i.icon-forward]]]]))
+          [:a.btn.forward {:href "#"}[:i.icon-forward]]
+          [:a.btn.last {:href "#"}[:i.icon-step-forward]]]]))
 
 (defn- button-state-helper 
   "A helper function that will unwrap the state of the player state atom and invoke the 
@@ -34,30 +36,38 @@
   [player-state items data-handler item-index]
   )
 
+(defn- go-to-index
+  "Helper function to go to a specific index"
+  [player-state items data-handler new-index]
+    (let [item (nth items new-index)]
+      (data-handler item)
+      (assoc player-state :index new-index)))
+
 (defn- back 
   "Handles the back button press."
   [player-state items data-handler item-index]
   (when (> item-index 0)
-    (let [new-index (dec item-index)
-          item (nth items new-index)]
-      (data-handler item)
-      (assoc player-state :index new-index))))
+    (go-to-index player-state items data-handler (dec item-index))))
 
 (defn- forward 
-  "Handles the forware button press."
+  "Handles the forward step button press."
   [player-state items data-handler item-index]
-  (when (< item-index (dec (count items)))
-    (let [new-index (inc item-index)
-          item (nth items new-index)]
-      (data-handler item)
-      (assoc player-state :index new-index))))
+  (when (< item-index (-> items count dec))
+    (go-to-index player-state items data-handler (inc item-index))))
 
-(defn- player-data-handler 
-  "Callback function that will be returned when a player control is constructed. It will
-  take the items to play and a data handler to accept each item"
-  [player-state-atom items data-handler]
-  (reset! player-state-atom (create-player-state items data-handler))
-  (log "Player data set!"))
+(defn- jump-to-first
+  "Handles the jump to first button press"
+  [player-state items data-handler item-index]
+  (when (> item-index 0)
+    (go-to-index player-state items data-handler 0)))
+
+(defn- jump-to-last 
+  "Handles the jump to last button press"
+  [player-state items data-handler item-index]
+  (when (< item-index (-> items count dec))
+    (go-to-index player-state items data-handler (-> items count dec))))
+    
+  
 
 (defn- create-player-state 
   "Creates the initial state of the player control"
@@ -66,8 +76,21 @@
   ([items data-handler]
    {:items items
     :data-handler data-handler
-    :index -1
+    :index 0
     :playing true}))
+
+(defn- player-data-handler 
+  "Callback function that will be returned when a player control is constructed. It will
+  take the items to play and a data handler to accept each item"
+  [player-state-atom items data-handler]
+  (reset! player-state-atom (create-player-state items data-handler))
+  (when (first items) (data-handler (first items)))
+  (log "Player data set!"))
+
+(defn- setup-button [player state-atom type handler-fn]
+  (let [btn (.find player (str "a." (name type)))
+        btn-click-handler (partial button-state-helper state-atom handler-fn)]
+    (.click btn btn-click-handler)))
 
 (defn ^:export createPlayerFn
   "Creates a player component within the given element and returns a function
@@ -77,19 +100,10 @@
   [element]
   (log (str "Creating a player within " element))
   (let [player (jq/append element player-control)
-        play-btn (.find player "a.play")
-        pause-btn (.find player "a.pause")
-        back-btn (.find player "a.back")
-        forward-btn (.find player "a.forward")
-        player-state-atom (atom (create-player-state))]
-    
-    (add-watch player-state-atom :log 
-               (fn [k a o n]
-                 (log (str "Player state set to " n))))
-    
-    (.click play-btn    (partial button-state-helper player-state-atom play))
-    (.click pause-btn   (partial button-state-helper player-state-atom pause))
-    (.click back-btn    (partial button-state-helper player-state-atom back))
-    (.click forward-btn (partial button-state-helper player-state-atom forward))
+        player-state-atom (atom (create-player-state))
+        button-types-and-fns {:play play :pause pause :back back :forward forward
+                              :first jump-to-first :last jump-to-last}]
+    (doseq [[btn-type btn-fn] button-types-and-fns]
+      (setup-button player player-state-atom btn-type btn-fn))
     (partial player-data-handler player-state-atom)))
 
