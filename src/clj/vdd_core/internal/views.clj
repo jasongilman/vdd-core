@@ -39,7 +39,8 @@
      [:title title]
      [:meta {:name "viewport" 
              :content "width=device-width, initial-scale=1.0"}]
-     (include-css "/bootstrap/css/bootstrap.min.css" 
+     (include-css "/jquery-ui/jquery-ui.min.css"
+                  "/bootstrap/css/bootstrap.min.css" 
                   ; Included before bootstrap-responsive because we want it
                   ; to override the body padding top and bottom styles in smaller pages
                   "/vdd/vdd.css"
@@ -63,6 +64,7 @@
            content
            (footer)
            (include-js "/jquery/jquery.min.js"
+                       "/jquery-ui/jquery-ui.min.js"
                        "/bootstrap/js/bootstrap.min.js"
                        "/autobahn/autobahn.min.js"
                        "/vdd/vdd-core.js")]
