@@ -24,7 +24,6 @@
        [:a.btn.last {:href "#"}[:i.icon-step-forward]]]]
      [:div.slider]]))
 
-
 (defn- go-to-index
   "Helper function to go to a specific index"
   [player-state-atom new-index-fn]
@@ -152,6 +151,14 @@
                               :first jump-to-first :last jump-to-last}]
     
     (reset! player-state-atom (create-player-state slider))
+    
+    ; Adds a class of playing to the player when it's playing
+    (add-watch player-state-atom :playing-state 
+               (fn [_ _ _ {playing :playing}]
+                 (if playing
+                   (.addClass player "playing")
+                   (.removeClass player "playing"))))
+    
     ; Add click handlers to the buttons
     (doseq [[btn-type btn-fn] button-types-and-fns]
       (setup-button player player-state-atom btn-type btn-fn))

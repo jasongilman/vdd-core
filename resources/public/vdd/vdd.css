@@ -2,3 +2,17 @@ body {
   padding-top: 60px;
   padding-bottom: 40px;
 }
+
+/*Style the play button while it's playing.
+Styles borrowed from Twitter Bootstrap btn-success style.*/
+div.playing a.play {
+  color: #fff;
+  text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
+  background-color: #5bb75b;
+  background-image: -moz-linear-gradient(top,#62c462,#51a351);
+  background-image: -webkit-gradient(linear,0 0,0 100%,from(#62c462),to(#51a351));
+  background-image: -webkit-linear-gradient(top,#62c462,#51a351);
+  background-image: -o-linear-gradient(top,#62c462,#51a351);
+  background-image: linear-gradient(to bottom,#62c462,#51a351);
+  background-repeat: repeat-x;
+}
