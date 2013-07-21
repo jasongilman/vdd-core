@@ -21,59 +21,54 @@
        [:a.btn.last {:href "#"}[:i.icon-step-forward]]]]
      [:div.slider]]))
 
-(defn- ui-state-helper 
-  "A helper function that will unwrap the state of the player state atom and invoke the 
-  given ui function."
-  [player-state-atom ui-fn]
-  (let [player-state @player-state-atom
-        items (:items player-state)
-        data-handler (:data-handler player-state)
-        item-index (:index player-state)
-        new-state (ui-fn player-state items data-handler item-index)]
-    (when new-state (reset! player-state-atom new-state))))
-
 
 (defn- play 
   "Handles the play button press."
-  [player-state items data-handler item-index]
+  [player-state-atom]
+  
   )
 
 (defn- pause 
   "Handles the pause button press."
-  [player-state items data-handler item-index]
+  [player-state-atom]
   )
 
 (defn- go-to-index
   "Helper function to go to a specific index"
-  [player-state items data-handler new-index]
-  (when (and (>= new-index 0)
-           (< new-index (count items))
-           (not= new-index (:index player-state)))
-    (let [item (nth items new-index)]
-      (data-handler item)
-      (ui.slider/set-value! (:slider player-state) new-index)
-      
-      (assoc player-state :index new-index))))
+  [player-state-atom new-index-fn]
+  (let [player-state @player-state-atom
+        {items :items 
+         data-handler :data-handler
+         item-index :index} player-state
+        new-index (new-index-fn item-index)]
+    (when (and (>= new-index 0)
+               (< new-index (count items))
+               (not= new-index item-index))
+      (let [item (nth items new-index)]
+        (data-handler item)
+        (ui.slider/set-value! (:slider player-state) new-index)
+        (swap! player-state-atom assoc :index new-index)))))
 
 (defn- back 
   "Handles the back button press."
-  [player-state items data-handler item-index]
-  (go-to-index player-state items data-handler (dec item-index)))
+  [player-state-atom]
+  (go-to-index player-state-atom dec))
 
 (defn- forward 
   "Handles the forward step button press."
-  [player-state items data-handler item-index]
-  (go-to-index player-state items data-handler (inc item-index)))
+  [player-state-atom]
+  (go-to-index player-state-atom inc))
 
 (defn- jump-to-first
   "Handles the jump to first button press"
-  [player-state items data-handler item-index]
-  (go-to-index player-state items data-handler 0))
+  [player-state-atom]
+  (go-to-index player-state-atom (constantly 0)))
 
 (defn- jump-to-last 
   "Handles the jump to last button press"
-  [player-state items data-handler item-index]
-  (go-to-index player-state items data-handler (-> items count dec)))
+  [player-state-atom]
+  (go-to-index player-state-atom (constantly 
+                                   (-> @player-state-atom :items count dec))))
     
 (defn- create-player-state 
   "Creates the initial state of the player control"
@@ -92,10 +87,11 @@
   [player-state-atom items data-handler]
   (let [player-state @player-state-atom
         slider (:slider player-state)
-        player-state (create-player-state slider items data-handler)
-        player-state (go-to-index player-state items data-handler 0)]
+        player-state (create-player-state slider items data-handler)]
+    (reset! player-state-atom player-state)
+    (jump-to-first player-state-atom)
     ; Set the max state of the slider
-    (ui.slider/set-option! slider "max" (dec (count items)))
+    (ui.slider/set-option! slider "max" (-> player-state :items count dec))
     
     (reset! player-state-atom player-state)
     (log "Player data set!")))
@@ -108,19 +104,13 @@
     type - the button type. ie :pause
     handler-fn - the function that should be called when the button is clicked."
   [player state-atom type handler-fn]
-  (let [btn (.find player (str "a." (name type)))
-        btn-click-handler (partial ui-state-helper state-atom handler-fn)]
-    (.click btn btn-click-handler)))
+  (let [btn (.find player (str "a." (name type)))]
+    (.click btn (partial handler-fn state-atom))))
 
 (defn- slide 
   "Handles the slider sliding to a new value."
   [state-atom new-index]
-  (let [player-state @state-atom
-        items (:items player-state)
-        data-handler (:data-handler player-state)
-        new-state (go-to-index player-state items data-handler new-index)]
-    (when new-state
-      (reset! state-atom new-state))))
+  (go-to-index state-atom (constantly new-index)))
  
 (defn- setup-slider
   [player state-atom]
