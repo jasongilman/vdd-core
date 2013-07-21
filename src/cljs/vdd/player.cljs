@@ -1,7 +1,8 @@
 (ns vdd.player
   (:require-macros [hiccups.core :as hiccups])
   (:require [hiccups.runtime :as hiccupsrt]
-            [jayq.core :as jq])
+            [jayq.core :as jq]
+            [vdd.ui.slider :as ui.slider])
   (:use [vdd.util :only [log]]))
 
 ; TODO This jams too much all in one file. We should try to abstract away some of it like the 
@@ -20,15 +21,15 @@
        [:a.btn.last {:href "#"}[:i.icon-step-forward]]]]
      [:div.slider]]))
 
-(defn- button-state-helper 
+(defn- ui-state-helper 
   "A helper function that will unwrap the state of the player state atom and invoke the 
-  given button function."
-  [player-state-atom button-fn]
+  given ui function."
+  [player-state-atom ui-fn]
   (let [player-state @player-state-atom
         items (:items player-state)
         data-handler (:data-handler player-state)
         item-index (:index player-state)
-        new-state (button-fn player-state items data-handler item-index)]
+        new-state (ui-fn player-state items data-handler item-index)]
     (when new-state (reset! player-state-atom new-state))))
 
 
@@ -45,17 +46,14 @@
 (defn- go-to-index
   "Helper function to go to a specific index"
   [player-state items data-handler new-index]
-  (if (and (>= new-index 0)
+  (when (and (>= new-index 0)
            (< new-index (count items))
            (not= new-index (:index player-state)))
     (let [item (nth items new-index)]
       (data-handler item)
-      ; Update the slider value
-      (.slider (:slider player-state) "value" new-index)
+      (ui.slider/set-value! (:slider player-state) new-index)
       
-      (assoc player-state :index new-index))
-    ; else don't change state
-    player-state))
+      (assoc player-state :index new-index))))
 
 (defn- back 
   "Handles the back button press."
@@ -88,10 +86,6 @@
     :playing true
     :slider slider}))
 
-(defn- update-slider-state
-  [slider items]
-  ())
-
 (defn- player-data-handler 
   "Callback function that will be returned when a player control is constructed. It will
   take the items to play and a data handler to accept each item"
@@ -101,7 +95,7 @@
         player-state (create-player-state slider items data-handler)
         player-state (go-to-index player-state items data-handler 0)]
     ; Set the max state of the slider
-    (.slider (:slider player-state) "option" "max" (dec (count items)))
+    (ui.slider/set-option! slider "max" (dec (count items)))
     
     (reset! player-state-atom player-state)
     (log "Player data set!")))
@@ -115,8 +109,23 @@
     handler-fn - the function that should be called when the button is clicked."
   [player state-atom type handler-fn]
   (let [btn (.find player (str "a." (name type)))
-        btn-click-handler (partial button-state-helper state-atom handler-fn)]
+        btn-click-handler (partial ui-state-helper state-atom handler-fn)]
     (.click btn btn-click-handler)))
+
+(defn- slide 
+  "Handles the slider sliding to a new value."
+  [state-atom new-index]
+  (let [player-state @state-atom
+        items (:items player-state)
+        data-handler (:data-handler player-state)
+        new-state (go-to-index player-state items data-handler new-index)]
+    (when new-state
+      (reset! state-atom new-state))))
+ 
+(defn- setup-slider
+  [player state-atom]
+  (let [update-value-fn (partial slide state-atom)]
+    (ui.slider/create (.find player "div.slider") update-value-fn)))
 
 (defn ^:export createPlayerFn
   "Creates a player component within the given element and returns a function
@@ -126,11 +135,12 @@
   [element]
   (log (str "Creating a player within " element))
   (let [player (jq/append element player-control)
-        slider-options {:min 0 :value 0 :step 1 :max 0}
-        slider (.slider (.find player "div.slider") slider-options)
-        player-state-atom (atom (create-player-state slider))
+        player-state-atom (atom nil)
+        slider (setup-slider player player-state-atom)
         button-types-and-fns {:play play :pause pause :back back :forward forward
                               :first jump-to-first :last jump-to-last}]
+    
+    (reset! player-state-atom (create-player-state slider))
     ; Add click handlers to the buttons
     (doseq [[btn-type btn-fn] button-types-and-fns]
       (setup-button player player-state-atom btn-type btn-fn))
