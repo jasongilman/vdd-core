@@ -8,6 +8,9 @@
 ; TODO This jams too much all in one file. We should try to abstract away some of it like the 
 ; button stuff and the slider.
 
+(def ^{:doc "Defines the duration in ms between play framews"}
+  duration 200)
+
 (def player-control 
   (hiccups/html 
     [:div.player
@@ -21,17 +24,6 @@
        [:a.btn.last {:href "#"}[:i.icon-step-forward]]]]
      [:div.slider]]))
 
-
-(defn- play 
-  "Handles the play button press."
-  [player-state-atom]
-  
-  )
-
-(defn- pause 
-  "Handles the pause button press."
-  [player-state-atom]
-  )
 
 (defn- go-to-index
   "Helper function to go to a specific index"
@@ -48,6 +40,33 @@
         (data-handler item)
         (ui.slider/set-value! (:slider player-state) new-index)
         (swap! player-state-atom assoc :index new-index)))))
+
+(defn- play-next-frame 
+  "Animates playing and looping through the visualization data"
+  [player-state-atom]
+  (let [{items :items
+         playing :playing} @player-state-atom
+        next-index-fn (fn [curr-index]
+                        (if (= curr-index (-> items count dec))
+                          0
+                          (inc curr-index)))]
+    (when playing
+      (do
+        (go-to-index player-state-atom next-index-fn)
+        (js/setTimeout (partial play-next-frame player-state-atom) duration)))))
+
+(defn- play 
+  "Handles the play button press."
+  [player-state-atom]
+  (when (not (:playing @player-state-atom))
+    (do 
+      (swap! player-state-atom assoc :playing true)
+      (play-next-frame player-state-atom))))
+
+(defn- pause 
+  "Handles the pause button press."
+  [player-state-atom]
+  (swap! player-state-atom assoc :playing false))
 
 (defn- back 
   "Handles the back button press."
@@ -78,7 +97,7 @@
    {:items items
     :data-handler data-handler
     :index -1
-    :playing true
+    :playing false
     :slider slider}))
 
 (defn- player-data-handler 
@@ -110,6 +129,8 @@
 (defn- slide 
   "Handles the slider sliding to a new value."
   [state-atom new-index]
+  ; The user took control of the slider so make sure we're not playing
+  (pause state-atom)
   (go-to-index state-atom (constantly new-index)))
  
 (defn- setup-slider
