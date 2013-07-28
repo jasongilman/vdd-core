@@ -19,6 +19,9 @@
                  [clj-wamp "1.0.0-rc1"]
                  [hiccup "1.0.3"]
                  
+                 ; Testing
+                 [clj-http "0.7.4"]
+                 
                  ; Clojurescript
                  [jayq "2.4.0"]
                  [hiccups "0.2.0"]]
@@ -32,8 +35,7 @@
   
   :repl-options {:init-ns user}
   :profiles {:dev {:source-paths ["dev"]
-                   :dependencies [[org.clojure/tools.namespace "0.2.3"]
-                                  [clj-http "0.7.4"]]}}
+                   :dependencies [[org.clojure/tools.namespace "0.2.3"]]}}
   
   :cljsbuild {:builds {:main {:source-paths ["src/cljs"]
                               :compiler {:output-to "resources/public/vdd/vdd-core.js"

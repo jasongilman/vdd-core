@@ -1,4 +1,5 @@
 (ns vdd-core.internal.views
+  (:require [vdd-core.internal.project-viz :as project-viz])
   (:use [hiccup.core]
         [hiccup.element :only [javascript-tag]]
         [hiccup.page :only [html5 include-css include-js]]))
@@ -70,31 +71,10 @@
                        "/vdd/vdd-core.js")]
           javascripts))))
 
-(defn- project-visualizations
-  "Finds the visualizations available in the configured :viz-root."
-  [config]
-  (let [viz-root (:viz-root config)]
-    ; Look in viz-root ...
-    (->> viz-root
-         clojure.java.io/file 
-         ; ... for all directories (recursively)
-         file-seq 
-         (map str)
-         ; ... that contain an index.html.
-         (filter #(re-seq #"/index.html$" %))
-         ; Get the directory name
-         (map #(-> (str viz-root "/(.*)/index.html$")
-                   re-pattern
-                   (re-matches %)
-                   last))
-         ; Return the path and title of the visualizations
-         (map (fn [viz] {:path (format "/viz/%s" viz) 
-                      :title viz})))))
-
 (defn- visualizations [config]
   {:built-in [{:path "/built-in/data-viewer" :title "Data Viewer"}
               {:path "/built-in/player-test" :title "Player Test"}]
-   :project (project-visualizations config)})
+   :project (project-viz/project-visualizations config)})
 
 (defn list-views-page
   "Returns a page containing the visualizations available"
