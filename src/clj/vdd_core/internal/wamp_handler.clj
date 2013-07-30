@@ -12,6 +12,19 @@
 (defn rpc-url [path] (str rpc-base-url path))
 (defn evt-url [path] (str evt-base-url path))
 
+(def data-callback (atom nil))
+
+(defn set-data-callback! 
+  "Sets the callback to invoke when data is sent from the visualization"
+  [callback]
+  (reset! data-callback callback))
+
+(defn- handle-viz-call 
+  "Handles rpc calls from the visualization by forwarding to the data callback"
+  [data]
+  (if-let [callback @data-callback]
+    (callback data)))
+
 ;; HTTP Kit/WAMP WebSocket handler
 
 (defn- on-open [sess-id]
@@ -35,7 +48,14 @@
       (wamp/http-kit-handler channel
         {:on-open        on-open
          :on-close       on-close
-         :on-call        {(rpc-url "echo")  identity
+         :on-call        {
+                          ; An rpc callback to allow the visualization to direct actions in the code env.
+                          (rpc-url "data-callback") handle-viz-call
+                          
+                          ; An rpc callback that just echo's everything - for testing
+                          (rpc-url "echo")  identity
+                          
+                          ; An rpc callback that just throws an exception - for testing
                           (rpc-url "throw") (fn [] (throw (Exception. "An exception")))
                           :on-before        on-before-call}
          :on-subscribe   {(evt-url "vizdata")  true}

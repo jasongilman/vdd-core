@@ -36,3 +36,8 @@
   (wamp/send-event! 
     (wamp-handler/evt-url channel)
     data))
+
+(defn set-viz-request-callback!
+  "Adds a callback that will be invoked when data is sent from the visualization"
+  [callback]
+  (wamp-handler/set-data-callback! callback))
