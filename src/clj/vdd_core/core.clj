@@ -32,9 +32,9 @@
 
 (defn data->viz
   "Sends the captured data to the visualization on the specified channel"
-  [channel data]
+  [data]
   (wamp/send-event! 
-    (wamp-handler/evt-url channel)
+    (wamp-handler/evt-url "vizdata")
     data))
 
 (defn set-viz-request-callback!

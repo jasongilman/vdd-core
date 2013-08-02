@@ -22,6 +22,7 @@
 (defn- handle-viz-call 
   "Handles rpc calls from the visualization by forwarding to the data callback"
   [data]
+  (info "vdd-core.internal.wamp-handler/handle-viz-call with data " data)
   (if-let [callback @data-callback]
     (callback data)))
 
