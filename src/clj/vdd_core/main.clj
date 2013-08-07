@@ -24,7 +24,7 @@
   (cond
     (= cmd "vizdata") 
     (let [parsed (cheshire/parse-string data)]
-      (core/data->viz "vizdata" parsed))
+      (core/data->viz parsed))
     :else (println "Unknown command: " cmd)))
 
 (defn- read-loop []
