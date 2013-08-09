@@ -3,13 +3,10 @@
   (:require [hiccups.runtime :as hiccupsrt]
             [jayq.core :as jq]
             [vdd.ui.slider :as ui.slider])
-  (:use [vdd.util :only [log]]))
+  (:use [vdd.util :only [log js-obj->map]]))
 
 ; TODO This jams too much all in one file. We should try to abstract away some of it like the 
 ; button stuff and the slider.
-
-(def ^{:doc "Defines the duration in ms between play framews"}
-  duration 200)
 
 (def player-control 
   (hiccups/html 
@@ -44,7 +41,8 @@
   "Animates playing and looping through the visualization data"
   [player-state-atom]
   (let [{items :items
-         playing :playing} @player-state-atom
+         playing :playing
+         options :options} @player-state-atom
         next-index-fn (fn [curr-index]
                         (if (= curr-index (-> items count dec))
                           0
@@ -52,7 +50,7 @@
     (when playing
       (do
         (go-to-index player-state-atom next-index-fn)
-        (js/setTimeout (partial play-next-frame player-state-atom) duration)))))
+        (js/setTimeout (partial play-next-frame player-state-atom) (:duration options))))))
 
 (defn- play 
   "Handles the play button press."
@@ -90,14 +88,15 @@
     
 (defn- create-player-state 
   "Creates the initial state of the player control"
-  ([slider] 
-   (create-player-state slider [] (fn [_] nil)))
-  ([slider items data-handler]
+  ([slider options] 
+   (create-player-state slider options [] (fn [_] nil)))
+  ([slider options items data-handler]
    {:items items
     :data-handler data-handler
     :index -1
     :playing false
-    :slider slider}))
+    :slider slider
+    :options options}))
 
 (defn- player-data-handler 
   "Callback function that will be returned when a player control is constructed. It will
@@ -105,7 +104,8 @@
   [player-state-atom items data-handler]
   (let [player-state @player-state-atom
         slider (:slider player-state)
-        player-state (create-player-state slider items data-handler)]
+        options (:options player-state)
+        player-state (create-player-state slider options items data-handler)]
     (reset! player-state-atom player-state)
     (jump-to-first player-state-atom)
     ; Set the max state of the slider
@@ -141,16 +141,24 @@
   "Creates a player component within the given element and returns a function
   that can be used to set the event data and handler function. Click handlers are assigned
   to all of the buttons in the player component created. The functions have been 
-  partially applied to a shared atom that is used to set the state."
-  [element]
+  partially applied to a shared atom that is used to set the state.
+  
+  Arguments
+  * element - The dom element to append the player control.
+  * options - optional js object containing options.
+    * Supported Options:
+      * duration - time in milliseconds when playing between each frame"
+  ([element] 
+   (createPlayerFn element (clj->js {:duration 200})))
+  ([element options]
   (log (str "Creating a player within " element))
   (let [player (jq/append element player-control)
+        options (js-obj->map  options)
         player-state-atom (atom nil)
         slider (setup-slider player player-state-atom)
         button-types-and-fns {:play play :pause pause :back back :forward forward
                               :first jump-to-first :last jump-to-last}]
-    
-    (reset! player-state-atom (create-player-state slider))
+    (reset! player-state-atom (create-player-state slider options))
     
     ; Adds a class of playing to the player when it's playing
     (add-watch player-state-atom :playing-state 
@@ -164,5 +172,5 @@
       (setup-button player player-state-atom btn-type btn-fn))
     
     ; Return a function that will allow setting the data and data-handler function
-    (partial player-data-handler player-state-atom)))
+    (partial player-data-handler player-state-atom))))
 
