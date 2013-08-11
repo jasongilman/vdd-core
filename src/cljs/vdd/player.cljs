@@ -98,7 +98,7 @@
   ([slider options items data-handler]
    {:items items
     :data-handler data-handler
-    :index -1
+    :index 0
     :playing false
     :slider slider
     :options options}))
