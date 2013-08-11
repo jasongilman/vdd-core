@@ -8,6 +8,11 @@
 ; TODO This jams too much all in one file. We should try to abstract away some of it like the 
 ; button stuff and the slider.
 
+(def left-arrow-key 37)
+(def space-key 32)
+(def right-arrow-key 39)
+(def p-key 80)
+
 (def player-control 
   (hiccups/html 
     [:div.player
@@ -137,6 +142,23 @@
   (let [update-value-fn (partial slide state-atom)]
     (ui.slider/create (.find player "div.slider") update-value-fn)))
 
+(defn- setup-keypresses
+  [{play-fn :play pause-fn :pause back-fn :back forward-fn :forward} player-state-atom]
+  (let [play-pause-fn (fn [player-state-atom]
+                        (if (:playing @player-state-atom)
+                          (pause-fn player-state-atom)
+                          (play-fn player-state-atom)))
+        ; Create a map of key presses to function handlers
+        key-player-fn-map {left-arrow-key   back-fn
+                           right-arrow-key  forward-fn
+                           space-key        forward-fn
+                           p-key            play-pause-fn}]
+    (.keydown 
+      (jq/$ js/window) 
+      (fn [e]
+        (if-let [f (get key-player-fn-map (.-which e))]
+          (f player-state-atom))))))
+
 (defn ^:export createPlayerFn
   "Creates a player component within the given element and returns a function
   that can be used to set the event data and handler function. Click handlers are assigned
@@ -166,6 +188,9 @@
                  (if playing
                    (.addClass player "playing")
                    (.removeClass player "playing"))))
+    
+    ; Map keyboard keys to functions
+    (setup-keypresses button-types-and-fns player-state-atom)
     
     ; Add click handlers to the buttons
     (doseq [[btn-type btn-fn] button-types-and-fns]
