@@ -28,4 +28,6 @@ found within `./resources-dev/config.clj`.
 
 ## License
 
-Copyright Jason Gilman 2013
+Copyright © 2013 Jason Gilman and [element 84](http://www.element84.com).
+
+Distributed under the MIT License.
