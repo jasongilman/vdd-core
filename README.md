@@ -26,6 +26,19 @@ Run with application defaults:
 Application defaults are supplied by environment-based configuration
 found within `./resources-dev/config.clj`.
 
+## Development
+
+TODO
+
+  * how to run tests
+  * how to start the repl
+  * how to refresh code
+  * how to start the clojurescript repl
+    * require phantomjs installed. Uses [Austin](https://github.com/cemerick/austin) for clojurescript repl.
+    * ```(austin-exec)```
+    * ```:cljs/quit``` to exit
+    * run clojurescript tests
+
 ## License
 
 Copyright © 2013 Jason Gilman and [element 84](http://www.element84.com).

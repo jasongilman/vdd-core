@@ -1,8 +1,8 @@
 (defproject vdd-core "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
-  :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :license {:name "MIT"
+            :url "http://opensource.org/licenses/MIT"}
   
   :main vdd-core.main
   
@@ -23,7 +23,6 @@
                  [clj-http "0.7.4"]
                  
                  ; Clojurescript
-                 [jayq "2.4.0"]
                  [hiccups "0.2.0"]]
   :plugins [[lein-cljsbuild "0.3.2"]]
   
@@ -32,13 +31,17 @@
   ; :hooks [leiningen.cljsbuild]
   
   :source-paths ["src/clj"]
+  :test-paths ["test/clj"]
   
   :repl-options {:init-ns user}
   :profiles {:dev {:source-paths ["dev"]
-                   :dependencies [[org.clojure/tools.namespace "0.2.3"]]}}
+                   :plugins [[com.cemerick/austin "0.1.0"]]
+                   :dependencies [[org.clojure/tools.namespace "0.2.3"]
+                                  [com.cemerick/clojurescript.test "0.0.4"]]}}
   
-  :cljsbuild {:builds {:main {:source-paths ["src/cljs"]
+  :cljsbuild {:builds {:main {:source-paths ["src/cljs" "test/cljs"]
                               :compiler {:output-to "resources/public/vdd/vdd-core.js"
                                          :optimizations :whitespace
                                          :pretty-print true}
-                              :jar true}}})
+                              :jar true}}
+              :test-commands {"unit-test" ["phantomjs" "test/runner.js" "resources/public/vdd/vdd-core.js"]}})

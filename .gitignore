@@ -11,6 +11,7 @@ pom.xml
 # Other clojurescript stuff
 /out
 /repl
+/.repl
 
 .DS_Store
 /**/.DS_Store

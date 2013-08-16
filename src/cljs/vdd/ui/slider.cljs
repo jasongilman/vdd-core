@@ -1,6 +1,5 @@
 (ns vdd.ui.slider
-  (:use [vdd.util :only [log]])
-  (:require [jayq.core :as jq]))
+  (:use [vdd.util :only [log]]))
 
 ; A very small wrapper around jquery ui slider
 ; http://jqueryui.com/slider
@@ -12,7 +11,7 @@
   ([element slide-callback]
    (create element slide-callback {:min 0 :value 0 :step 1 :max 0}))
   ([element slide-callback slider-options]
-    (let [element (jq/$ element)
+    (let [element (js/$ element)
           callback-wrapper (fn [event ui] 
                              (slide-callback (.-value ui)))
           slider-options (assoc slider-options :slide callback-wrapper)]

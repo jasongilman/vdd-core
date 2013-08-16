@@ -1,7 +1,6 @@
 (ns vdd.player
   (:require-macros [hiccups.core :as hiccups])
   (:require [hiccups.runtime :as hiccupsrt]
-            [jayq.core :as jq]
             [vdd.ui.slider :as ui.slider])
   (:use [vdd.util :only [log js-obj->map]]))
 
@@ -154,7 +153,7 @@
                            space-key        forward-fn
                            p-key            play-pause-fn}]
     (.keydown 
-      (jq/$ js/window) 
+      (js/$ js/window) 
       (fn [e]
         (if-let [f (get key-player-fn-map (.-which e))]
           (f player-state-atom))))))
@@ -174,7 +173,7 @@
    (createPlayerFn element (clj->js {:duration 200})))
   ([element options]
   (log (str "Creating a player within " element))
-  (let [player (jq/append element player-control)
+  (let [player (.append (js/$ element) player-control)
         options (js-obj->map  options)
         player-state-atom (atom nil)
         slider (setup-slider player player-state-atom)
