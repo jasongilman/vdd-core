@@ -2,7 +2,9 @@
   (:require [clojure.browser.repl :as repl]))
 
 ; Starts a connection to a repl as indicated below. See https://github.com/emezeske/lein-cljsbuild/blob/0.3.2/doc/REPL.md
-(repl/connect "http://localhost:9000/repl")
+; Uncomment to allow clojurescript debugging
+#_(repl/connect "http://localhost:9000/repl")
+
 ; To use the repl
 ; terminal1 - lein ring server
 ; terminal2 - lein trampoline cljsbuild repl-listen
