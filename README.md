@@ -36,7 +36,7 @@ TODO
   * how to start the clojurescript repl
     * require phantomjs installed. Uses [Austin](https://github.com/cemerick/austin) for clojurescript repl.
     * ```(austin-exec)```
-    * I can't seem to reference defined clojure code so I need to manually evaluate it into the repl with ctrl+shift+, then f for file
+    * I can't seem to reference defined clojure script code so I need to manually evaluate it into the repl with ctrl+shift+, then f for file
     * ```:cljs/quit``` to exit
     * run clojurescript tests
 

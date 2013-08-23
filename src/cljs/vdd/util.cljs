@@ -1,7 +1,17 @@
 (ns vdd.util)
 
+; Figure out if we're running in the rhino repl
+(def in-rhino (empty? (filter 
+                     #(= "document" %) 
+                     (js->clj 
+                       (.keys js/Object 
+                              (js/eval "this"))))))
+
+; TODO test if println works in a browser in clojurescript
 (defn log [str]
-  (.log js/console str))
+  (if in-rhino
+    (println str)
+    (.log js/console str)))
 
 (defn js-obj->map 
   "Converts a javascript object to a map with keyword keys. Does not handle subobjects"
