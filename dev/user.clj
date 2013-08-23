@@ -3,7 +3,8 @@
             [clojure.test :refer (run-all-tests)]
             [clojure.tools.namespace.repl :refer (refresh refresh-all)]
             [vdd-core.internal.system :as system]
-            [vdd-core.core :as core]))
+            [vdd-core.core :as core])
+  (:use [clojure.repl]))
 
 ; See http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded 
 ; for information on why this file is setup this way

@@ -37,6 +37,7 @@
   :profiles {:dev {:source-paths ["dev"]
                    :plugins [[com.cemerick/austin "0.1.0"]]
                    :dependencies [[org.clojure/tools.namespace "0.2.3"]
+                                  ; Clojurescript testing
                                   [com.cemerick/clojurescript.test "0.0.4"]]}}
   
   :cljsbuild {:builds {:main {:source-paths ["src/cljs" "test/cljs"]
@@ -44,4 +45,4 @@
                                          :optimizations :whitespace
                                          :pretty-print true}
                               :jar true}}
-              :test-commands {"unit-test" ["phantomjs" "test/runner.js" "resources/public/vdd/vdd-core.js"]}})
+              :test-commands {"unit-test" ["phantomjs" "test/cljs/runner.js" "resources/public/vdd/vdd-core.js"]}})
