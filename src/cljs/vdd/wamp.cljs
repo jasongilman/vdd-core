@@ -15,7 +15,12 @@
   (.prefix session "event" (str base-topic-uri "event#"))
   (.prefix session "rpc"   (str base-topic-uri "rpc#"))
   (doseq [[channel handler] channel-config]
-    (.subscribe session (format "event:%s" channel) handler)))
+    (.subscribe session 
+                (format "event:%s" 
+                        (if (keyword? channel)
+                          (name channel)
+                          channel))
+                handler)))
 
 (defn- disconnect-handler 
   "Handles disconnections from the server."
@@ -23,9 +28,6 @@
   (when (not= 0 code)
     (log ("Connection lost (" reason ")"))))
 
-
-(defn ^:export default- []
-  (clj->js {:vizdata (fn [_ eventData] (log (format "Event data received %s" eventData)))}))
 
 (defn- channels-to-handlers-or-callback->config 
   "TODO"

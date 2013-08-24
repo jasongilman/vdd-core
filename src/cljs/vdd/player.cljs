@@ -110,13 +110,15 @@
   (let [player-state @player-state-atom
         slider (:slider player-state)
         options (:options player-state)
-        player-state (create-player-state slider options items data-handler)]
+        player-state (create-player-state slider options items data-handler)
+        ; Initial index is set to -1 to indicate nothing is being shown yet. If we set it to 
+        ; 0 then when the player data is set and it jumps to the beginning it will think it 
+        ; doesn't need to display anything since it's already at 0.
+        player-state (assoc player-state :index -1)]
     (reset! player-state-atom player-state)
     (jump-to-first player-state-atom)
     ; Set the max state of the slider
     (ui.slider/set-option! slider "max" (-> player-state :items count dec))
-    
-    (reset! player-state-atom player-state)
     (util/log "Player data set!")))
 
 (defn- setup-button 
@@ -173,7 +175,6 @@
   ([element] 
    (createPlayerFn element (clj->js {:duration 200})))
   ([element options]
-    (util/log (str "Creating a player within " element))
     (let [player (.append (js/$ element) player-control)
           options (util/js-obj->map  options)
           player-state-atom (atom nil)
