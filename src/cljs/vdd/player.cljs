@@ -1,8 +1,8 @@
 (ns vdd.player
   (:require-macros [hiccups.core :as hiccups])
   (:require [hiccups.runtime :as hiccupsrt]
-            [vdd.ui.slider :as ui.slider])
-  (:use [vdd.util :only [log js-obj->map]]))
+            [vdd.ui.slider :as ui.slider]
+            [vdd.util :as util]))
 
 ; TODO This jams too much all in one file. We should try to abstract away some of it like the 
 ; button stuff and the slider.
@@ -54,7 +54,7 @@
     (when playing
       (do
         (go-to-index player-state-atom next-index-fn)
-        (js/setTimeout (partial play-next-frame player-state-atom) (:duration options))))))
+        (util/set-timeout (partial play-next-frame player-state-atom) (:duration options))))))
 
 (defn- play 
   "Handles the play button press."
@@ -91,6 +91,7 @@
                                    (-> @player-state-atom :items count dec))))
     
 (defn- create-player-state 
+  ; TODO document options
   "Creates the initial state of the player control"
   ([slider options] 
    (create-player-state slider options [] (fn [_] nil)))
@@ -116,7 +117,7 @@
     (ui.slider/set-option! slider "max" (-> player-state :items count dec))
     
     (reset! player-state-atom player-state)
-    (log "Player data set!")))
+    (util/log "Player data set!")))
 
 (defn- setup-button 
   "Adds a click handler to a button within the player
@@ -172,29 +173,29 @@
   ([element] 
    (createPlayerFn element (clj->js {:duration 200})))
   ([element options]
-  (log (str "Creating a player within " element))
-  (let [player (.append (js/$ element) player-control)
-        options (js-obj->map  options)
-        player-state-atom (atom nil)
-        slider (setup-slider player player-state-atom)
-        button-types-and-fns {:play play :pause pause :back back :forward forward
-                              :first jump-to-first :last jump-to-last}]
-    (reset! player-state-atom (create-player-state slider options))
-    
-    ; Adds a class of playing to the player when it's playing
-    (add-watch player-state-atom :playing-state 
-               (fn [_ _ _ {playing :playing}]
-                 (if playing
-                   (.addClass player "playing")
-                   (.removeClass player "playing"))))
-    
-    ; Map keyboard keys to functions
-    (setup-keypresses button-types-and-fns player-state-atom)
-    
-    ; Add click handlers to the buttons
-    (doseq [[btn-type btn-fn] button-types-and-fns]
-      (setup-button player player-state-atom btn-type btn-fn))
-    
-    ; Return a function that will allow setting the data and data-handler function
-    (partial player-data-handler player-state-atom))))
+    (util/log (str "Creating a player within " element))
+    (let [player (.append (js/$ element) player-control)
+          options (util/js-obj->map  options)
+          player-state-atom (atom nil)
+          slider (setup-slider player player-state-atom)
+          button-types-and-fns {:play play :pause pause :back back :forward forward
+                                :first jump-to-first :last jump-to-last}]
+      (reset! player-state-atom (create-player-state slider options))
+      
+      ; Adds a class of playing to the player when it's playing
+      (add-watch player-state-atom :playing-state 
+                 (fn [_ _ _ {playing :playing}]
+                   (if playing
+                     (.addClass player "playing")
+                     (.removeClass player "playing"))))
+      
+      ; Map keyboard keys to functions
+      (setup-keypresses button-types-and-fns player-state-atom)
+      
+      ; Add click handlers to the buttons
+      (doseq [[btn-type btn-fn] button-types-and-fns]
+        (setup-button player player-state-atom btn-type btn-fn))
+      
+      ; Return a function that will allow setting the data and data-handler function
+      (partial player-data-handler player-state-atom))))
 

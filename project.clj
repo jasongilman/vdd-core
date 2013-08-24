@@ -28,7 +28,7 @@
   
   ; Commented out to increase repl startup speed
   ; Use lein cljsbuild auto (or once) to compile
-  ; :hooks [leiningen.cljsbuild]
+  :hooks [leiningen.cljsbuild]
   
   :source-paths ["src/clj"]
   :test-paths ["test/clj"]

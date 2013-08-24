@@ -18,3 +18,8 @@
   [jo]
   (into {} (for [[k v] (js->clj jo)]
              [(keyword k) v])))
+
+(defn set-timeout 
+  "Invokes the function f in the given number of milliseconds. A wrapper around window.setTimeout"
+  [f milliseconds]
+  (.setTimeout js/window f milliseconds))

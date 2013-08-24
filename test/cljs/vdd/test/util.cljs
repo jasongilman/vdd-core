@@ -3,10 +3,6 @@
   (:require [cemerick.cljs.test :as t]
             [vdd.util :as util]))
 
-(comment 
-  (t/test-ns 'vdd.test.util)
-)
-
 (deftest test-js-obj->map
   (are [json clj-obj] (= clj-obj (util/js-obj->map (js/JSON.parse json)))
       "{\"a\":5}" {:a 5}

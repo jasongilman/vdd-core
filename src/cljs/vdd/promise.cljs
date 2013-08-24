@@ -1,5 +1,5 @@
 (ns vdd.promise
-  (:use [vdd.util :only [log]]))
+  (:use [vdd.util :only [log set-timeout]]))
 
 ; A (very) poor man's implementation of promises in clojurescript. Once core.async becomes more primetime we
 ; should switch this to use that.
@@ -20,10 +20,6 @@
   [p value]
   (when (= no-value-set-marker @p)
     (reset! p value)))
-
-(defn- set-timeout [f milliseconds]
-  (.setTimeout js/window f WAIT_TIME))
-
 
 (defn deref-then 
   "Dereferences the promise then executes the given function. If the promise times out the timeout-handler will be invoked"

@@ -4,10 +4,6 @@
             [vdd.promise])
   (:use [vdd.util :only [log]]))
 
-(comment 
-  (t/test-ns 'vdd.test.promise)
-)
-
 (defn set-timeout-mock
   "A mock version of set-timeout. It just immediately calls f."
   [f milliseconds]
@@ -28,7 +24,7 @@
   (let [p (vdd.promise/promise)
         value 5]
     (cljs.core/with-redefs 
-      [vdd.promise/set-timeout set-timeout-mock]
+      [vdd.util/set-timeout set-timeout-mock]
       (is (= :timedout (vdd.promise/deref-then
                p
                identity
