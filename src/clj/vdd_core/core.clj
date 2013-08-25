@@ -5,15 +5,16 @@
              :refer (trace debug info warn error fatal spy)]
             [vdd-core.internal.wamp-handler :as wamp-handler]))
 
-; TODO can we change this to something other than mutable state or at least not put the atom in a var
-
-(def data-callback (atom nil))
-
 (defn- handle-viz-call 
   "Handles rpc calls from the visualization by forwarding to the data callback"
-  [data]
-  (if-let [callback @data-callback]
-    (callback data)))
+  [{data-handler "fn" data "data"}]
+  (println "received data " data)
+  (try 
+    (let [data-handler (resolve (read-string data-handler))]
+      (data-handler data))
+    (catch Exception e
+      (println "Error trying to invoke data handler " e)
+      (.printStackTrace e))))
 
 (defn config 
   "Creates a new default config map and returns it."
@@ -52,8 +53,3 @@
   ([data] (data->viz "vizdata" data))
   ([channel data]
     (wamp/send-event! (wamp-handler/evt-url channel) data)))
-
-(defn set-viz-request-callback!
-  "Adds a callback that will be invoked when data is sent from the visualization"
-  [callback]
-  (reset! data-callback callback))

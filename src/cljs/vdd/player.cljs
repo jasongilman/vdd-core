@@ -118,8 +118,7 @@
     (reset! player-state-atom player-state)
     (jump-to-first player-state-atom)
     ; Set the max state of the slider
-    (ui.slider/set-option! slider "max" (-> player-state :items count dec))
-    (util/log "Player data set!")))
+    (ui.slider/set-option! slider "max" (-> player-state :items count dec))))
 
 (defn- setup-button 
   "Adds a click handler to a button within the player

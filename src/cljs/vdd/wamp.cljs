@@ -2,7 +2,6 @@
   (:require [vdd.promise])
   (:use [vdd.util :only [log js-obj->map]]))
 
-
 (def base-topic-uri "http://vdd-core/")
 (def connect-options {:maxRetries 60 :retryDelay 30000})
 
@@ -27,7 +26,6 @@
   [code reason]
   (when (not= 0 code)
     (log ("Connection lost (" reason ")"))))
-
 
 (defn- channels-to-handlers-or-callback->config 
   "TODO"
@@ -59,35 +57,44 @@
   "Sends data from the visualization to the coding environment to allow the visualization to drive the code
   being visualized. The data sent can be any JSON serializable object. Takes the following arguments:
   * session - the session object returned from calling connect.
+  * server-data-fn - A string containing the namespace and function to call on server side. ie. 'my-ns/test-code'
   * data - The data to send
   * success - optional callback function with the response data. Defaults to logging responses.
   * error - optional callback function to handle errors. Defaults to logging errors.
   * channel - the channel to send the data on."
-  [session-promise
-   data
-   {success-handler :success 
-    error-handler :error
-    channel :channel
-    :or {:success (fn [data] (log (str "Successfully called and received " data)))
-         :error (fn [data] (log (str "Error sending data from viz " data)))
-         :channel "data-callback"}}]
-  (vdd.promise/deref-then 
-    session-promise
-    (fn [session]
-      (if session
-        (.then (.call session (str "rpc:" channel) data)
-               success-handler
-               error-handler)
-        (log "The session object was nil. We don't appear to be connected.")))
-    #(do 
-       (log "Timed out waiting for session object while trying to send data")
-       (error-handler "timeout"))))
+  ([session-promise server-data-fn data]
+    (send-data session-promise 
+               server-data-fn 
+               data 
+               {:success (fn [data] (log (str "Successfully called and received " data)))
+                :error (fn [data] (log (str "Error sending data from viz " data)))
+                :channel "data-callback"}))
+  ([session-promise 
+    server-data-fn 
+    data
+    {success-handler :success 
+     error-handler :error
+     channel :channel}]
+   (vdd.promise/deref-then 
+     session-promise
+     (fn [session]
+       (if session
+         (do 
+           (log (format "Sending data %s on channel [%s]" data (str "rpc:" channel)))
+           (.then (.call session (str "rpc:" channel) (clj->js {:fn server-data-fn :data data}))
+                  success-handler
+                  error-handler))
+         (log "The session object was nil. We don't appear to be connected.")))
+     #(do 
+        (log "Timed out waiting for session object while trying to send data")
+        (error-handler "timeout")))))
 
 (defn ^:export sendData 
-  "Public version of send-data to be called from javascript. It handles javascript options object"
-  ([session-promise data]
-   (send-data session-promise data {}))
-  ([session-promise data js-options]
-   (send-data session-promise data (js-obj->map js-options))))
+  "Public version of send-data to be called from javascript. It handles javascript options object."
+  ([session-promise server-data-fn data]
+   (send-data session-promise server-data-fn data))
+  ([session-promise server-data-fn data js-options]
+   (log (format "Using options %s" js-options))
+   (send-data session-promise server-data-fn data (js-obj->map js-options))))
 
            

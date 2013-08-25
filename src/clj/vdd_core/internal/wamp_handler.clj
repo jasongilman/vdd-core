@@ -20,17 +20,23 @@
 (defn- on-close [sess-id status]
   (debug "WAMP client disconnected [" sess-id "] " status))
 
+(defn- to-string 
+  "Converts s to a string. If s is a keyword it will return its name."
+  [s]
+  (if (keyword? s)
+    (name s)
+    (str s)))
+
 (defn- wamp-config [config] 
   (let [channel-config (into {} (for [channel (:data-channels config)] 
-                                  [(evt-url channel) true]))
+                                  [(evt-url (to-string channel)) true]))
         rpc-config (into {}(for [[rpc-name f] (:viz-request-handlers config)]
-                             [(rpc-url rpc-name) f]))]
+                             [(rpc-url (to-string rpc-name)) f]))]
     {:on-open        on-open
      :on-close       on-close
      :on-call        rpc-config
      :on-subscribe   channel-config
      :on-publish     channel-config}))
-
 
 (defn handler
   "Returns a http-kit websocket handler with wamp subprotocol"
