@@ -11,19 +11,21 @@
   
   ; TODO look for more exclusions to reduce the size of the uberjar created
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [com.taoensso/timbre "2.1.2"]
+                 [com.taoensso/timbre "2.6.1"]
                  [compojure "1.1.5"]
                  [ring-server "0.2.8" :exclusions [ring/ring-jetty-adapter]]
-                 [http-kit "2.1.6"]
+                 [http-kit "2.1.10"]
                  [cheshire "5.2.0"]
-                 [clj-wamp "1.0.0-rc1"]
-                 [hiccup "1.0.3"]
-                 
-                 ; Testing
-                 [clj-http "0.7.4"]
+                 [clj-wamp "1.0.0"]
+                 [hiccup "1.0.4"]
                  
                  ; Clojurescript
-                 [hiccups "0.2.0"]]
+                 [hiccups "0.2.0"]
+                 
+                 ; Testing
+                 [clj-http "0.7.6"]
+                 ; Testing that includes the filesystem (project-viz)
+                 [me.raynes/fs "1.4.5"]]
   :plugins [[lein-cljsbuild "0.3.2"]]
   
   ; Commented out to increase repl startup speed
@@ -36,12 +38,9 @@
   :repl-options {:init-ns user}
   :profiles {:dev {:source-paths ["dev"]
                    :plugins [[com.cemerick/austin "0.1.0"]]
-                   :dependencies [[org.clojure/tools.namespace "0.2.3"]
+                   :dependencies [[org.clojure/tools.namespace "0.2.4"]
                                   ; Clojurescript testing
-                                  [com.cemerick/clojurescript.test "0.0.4"]
-                                  
-                                  ; Testing that includes the filesystem (project-viz)
-                                  [me.raynes/fs "1.4.4"]]}}
+                                  [com.cemerick/clojurescript.test "0.0.4"]]}}
   
   :cljsbuild {:builds {:main {:source-paths ["src/cljs" "test/cljs"]
                               :compiler {:output-to "resources/public/vdd/vdd-core.js"
