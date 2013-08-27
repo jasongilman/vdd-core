@@ -4,15 +4,6 @@
             [taoensso.timbre :as timbre]
             [clj-http.client :as client]))
 
-(deftest start-viz
-  (let [port (inc (:port (c/config)))
-        config (assoc (c/config) :port port)
-        server (c/start-viz config)]
-    (try
-      (is (= 200 (:status (client/get (str "http://localhost:" port)))))
-      (finally (c/stop-viz server)))))
-
-
 (def saved-data (atom nil))
 
 (defn test-data-handler [data]
@@ -38,3 +29,12 @@
     (clear-saved-data)
     (#'c/handle-viz-call {"fn" "vdd-core.core-test/does-not-exist" "data" 5})
     (is (= nil @saved-data))))
+
+(deftest start-viz
+  (let [port (inc (:port (c/config)))
+        config (assoc (c/config) :port port)
+        config (assoc-in config [:log :stdout-enabled] false)
+        server (c/start-viz config)]
+    (try
+      (is (= 200 (:status (client/get (str "http://localhost:" port)))))
+      (finally (c/stop-viz server)))))

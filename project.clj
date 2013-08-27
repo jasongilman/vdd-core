@@ -38,7 +38,10 @@
                    :plugins [[com.cemerick/austin "0.1.0"]]
                    :dependencies [[org.clojure/tools.namespace "0.2.3"]
                                   ; Clojurescript testing
-                                  [com.cemerick/clojurescript.test "0.0.4"]]}}
+                                  [com.cemerick/clojurescript.test "0.0.4"]
+                                  
+                                  ; Testing that includes the filesystem (project-viz)
+                                  [me.raynes/fs "1.4.4"]]}}
   
   :cljsbuild {:builds {:main {:source-paths ["src/cljs" "test/cljs"]
                               :compiler {:output-to "resources/public/vdd/vdd-core.js"
