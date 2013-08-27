@@ -8,13 +8,12 @@
 (defn- handle-viz-call 
   "Handles rpc calls from the visualization by forwarding to the data callback"
   [{data-handler "fn" data "data"}]
-  (println "received data " data)
+  (info "Received data " data)
   (try 
     (let [data-handler (resolve (read-string data-handler))]
       (data-handler data))
-    (catch Exception e
-      (println "Error trying to invoke data handler " e)
-      (.printStackTrace e))))
+    (catch RuntimeException e
+      (error e "Error trying to invoke data handler"))))
 
 (defn config 
   "Creates a new default config map and returns it."

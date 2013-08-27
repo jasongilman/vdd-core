@@ -1,4 +1,6 @@
-(ns vdd-core.capture-global)
+(ns vdd-core.capture-global
+  (:require [taoensso.timbre :as timbre :refer (trace)]))
+
 
 ; This is global mutable state. Not ideal. 
 ; This could be refactored later to allow storage of captured data 
@@ -18,5 +20,5 @@
 (defn capture!
   "Captures data for visualization."
   [data]
-  (println "Capturing " data)
+  (trace "Capturing " data)
   (swap! _captured concat [data]))
