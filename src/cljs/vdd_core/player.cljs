@@ -1,8 +1,8 @@
-(ns vdd.player
+(ns vdd-core.player
   (:require-macros [hiccups.core :as hiccups])
   (:require [hiccups.runtime :as hiccupsrt]
-            [vdd.ui.slider :as ui.slider]
-            [vdd.util :as util]))
+            [vdd-core.ui.slider :as ui.slider]
+            [vdd-core.util :as util]))
 
 ; TODO This jams too much all in one file. We should try to abstract away some of it like the 
 ; button stuff and the slider.

@@ -1,5 +1,5 @@
-(ns vdd.promise
-  (:use [vdd.util :only [log set-timeout]]))
+(ns vdd-core.promise
+  (:use [vdd-core.util :only [log set-timeout]]))
 
 ; A (very) poor man's implementation of promises in clojurescript. Once core.async becomes more primetime we
 ; should switch this to use that.

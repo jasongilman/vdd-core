@@ -88,14 +88,41 @@ VDD Core provides a basic set of functions to capture code execution. For a more
 
 TODO Link to API documentation after we put it on github pages.
 
-Here's an example of capturing code execution and sending it to the visualization
+Here's an example of capturing code execution and sending it to the visualization. This is a very trivial example for which we normally create a visualization.
 
 The code in your application:
 ```clojure
+(ns my-math-lib
+  (:require [vdd-core.capture-global :as capture]))
+
+(defn average 
+  "Takes a set of numbers and calculates their average."
+  [numbers]
+  (let [size (count numbers)
+        sum (reduce + numbers)]
+    (capture/capture! {:numbers numbers :size size :sum sum})
+    (float (/ sum size))))
 ```
 
 `driver.clj`:
 ```clojure
+(ns my-math-lib.driver
+  (:require [my-math-lib]
+            [vdd-core.core :as vdd]
+            [vdd-core.capture-global :as capture]))
+
+(defn viz-average 
+  "Executes the average function. Gathers captured data and sends it to the visualization."
+  [numbers]
+  ; Enable capturing of data.
+  (capture/enable)
+  ; Reset the global captured state
+  (capture/reset-captured!)
+  
+  (let [result (my-math-lib/average numbers)
+        captured (capture/captured)]
+    ; Send the data to be visualized
+    (vdd/data->viz captured)))
 ```
 
 

@@ -1,7 +1,7 @@
-(ns vdd.data
-  (:use [vdd.util :only [log]]
+(ns vdd-core.data
+  (:use [vdd-core.util :only [log]]
         [clojure.string :only [join]])
-  (:require [vdd.wamp :as wamp]))
+  (:require [vdd-core.connection :as connection]))
 
 (defprotocol DataToHtml
   "Defines a method for converting from generic data to HTML structures"
@@ -18,7 +18,7 @@
   "Enables viewing on an element. When data is received for viewing it will be displayed in the given target."
   [new-target]
   (reset! target-element new-target)
-  (wamp/connect visualize-data)) 
+  (connection/connect visualize-data)) 
 
 (extend-protocol DataToHtml
   cljs.core.PersistentHashMap

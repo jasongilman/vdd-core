@@ -1,9 +1,9 @@
-(ns vdd.test.player
+(ns vdd-core.test.player
   (:require-macros [cemerick.cljs.test :refer (is deftest with-test run-tests testing are)])
   (:require [cemerick.cljs.test :as t]
-            [vdd.util :as util]
-            [vdd.ui.slider :as slider]
-            [vdd.player :as p]))
+            [vdd-core.util :as util]
+            [vdd-core.ui.slider :as slider]
+            [vdd-core.player :as p]))
 
 (defn create-player-state [items]
   (let [items (range 5)

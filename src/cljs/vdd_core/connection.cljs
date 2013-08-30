@@ -1,6 +1,6 @@
-(ns vdd.wamp
-  (:require [vdd.promise])
-  (:use [vdd.util :only [log js-obj->map]]))
+(ns vdd-core.connection
+  (:require [vdd-core.promise])
+  (:use [vdd-core.util :only [log js-obj->map]]))
 
 (def base-topic-uri "http://vdd-core/")
 (def connect-options {:maxRetries 60 :retryDelay 30000})
@@ -42,10 +42,10 @@
   [channels-to-handlers-or-callback]
   (let [channel-config (channels-to-handlers-or-callback->config channels-to-handlers-or-callback)
         ws-uri (format "ws://localhost:%d/ws" (or (:port channel-config) (.-port js/location)))
-        session-promise (vdd.promise/promise)
+        session-promise (vdd-core.promise/promise)
         connection-handler (fn [session]
                              (session-connection-handler channel-config session)
-                             (vdd.promise/deliver session-promise session))]
+                             (vdd-core.promise/deliver session-promise session))]
     (.connect js/ab
               ws-uri 
               connection-handler 
@@ -75,7 +75,7 @@
     {success-handler :success 
      error-handler :error
      channel :channel}]
-   (vdd.promise/deref-then 
+   (vdd-core.promise/deref-then 
      session-promise
      (fn [session]
        (if session

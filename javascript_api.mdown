@@ -1,0 +1,3 @@
+# vdd-core JavaScript API
+
+This documents the JavaScript API for vdd-core.

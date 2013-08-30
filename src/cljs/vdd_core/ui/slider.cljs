@@ -1,5 +1,5 @@
-(ns vdd.ui.slider
-  (:use [vdd.util :only [log]]))
+(ns vdd-core.ui.slider
+  (:use [vdd-core.util :only [log]]))
 
 ; A very small wrapper around jquery ui slider
 ; http://jqueryui.com/slider

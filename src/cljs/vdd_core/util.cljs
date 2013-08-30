@@ -1,4 +1,4 @@
-(ns vdd.util)
+(ns vdd-core.util)
 
 ; Figure out if we're running in the rhino repl
 (def in-rhino (empty? (filter 
