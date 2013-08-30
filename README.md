@@ -1,35 +1,18 @@
 # vdd-core
 
-vdd-core is a minimal Clojure library built to help enable Visualization Driven Development (VDD). Read [What is Visualization Driven Development]() (TODO make a link) first if you don't know what VDD is. vdd-core captures code execution as data in your coding environment, sends them to the browser, and then invokes code to visualize it.
+vdd-core is a minimal Clojure library built to help enable Visualization Driven Development (VDD). Read [What is Visualization Driven Development]() (TODO make a link) first if you don't know what VDD is. vdd-core captures code execution as data in your coding environment, sends them to the browser, and then invokes code to visualize it. vdd-core is not visualization framework or a replacement for things like D3 or Raphael.js. It will be a place to include components to make building visualizations of code execution easier.
 
-## What isn't it?
+## Examples
 
-  * It's not a visualization framework or a replacement for things like D3 or Raphael.js. 
-  * It's not _only_ an educational tool. It's useful for education as a bonus. It was built to be used to help develop production software.
-
-## What is it?
-
-  * a way to capture code execution and send it to the browser
-  * a set of components to help aid in building visualizations of code execution.
-
-
-TODO
-
-What's the goal? 
-What is the job of the project?
-What doesn't it do
-
-Should I have something describing what visualization driven development is?
-
-TODO Link to example project
-
-## Requirements
-
-TODO
+The [vdd-core-examples](https://github.com/Element84/vdd-core-examples) (TODO make sur ethis link works) project has several examples of using vdd-core. 
 
 ## Installation
 
-TODO
+Add the following dependency to your `project.clj` file:
+
+    [vdd-core "0.1.0"]
+
+For more instructions see (TODO link to using vdd core)    
 
 ## Some sort of detailed description
 

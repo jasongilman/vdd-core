@@ -1,0 +1,104 @@
+## Outline
+
+  * Install using the version on the home page by adding it to your project.clj
+  * Starting server in the REPL
+  * Project layout
+    * viz folder
+      * subfolders for each visualization
+      * index.html
+      * css and javascript
+      * driver.clj
+  * Capturing code execution
+    * TODO can we generate documentation?
+  * Javascript code
+    * talk about connecting
+    * using player
+    * TODO we need to create a page for javascript documentation
+
+## Installation
+
+  - Update your `project.clj` file with the version specifed in the [README](https://github.com/jasongilman/vdd-core) as a development dependency.
+  - Add `viz` to the source path in the development profile.
+
+An excerpt of the `:profiles` in your `project.clj` might look like the following:
+
+```clojure
+  :profiles {:dev {:dependencies [[ 
+                                  ; Added vdd-core as a development dependency. Make sure to get latest version.
+                                  [vdd-core "0.1.0"]]
+                   ; Add viz as a source path to load visualization drivers
+                   :source-paths ["viz"]}}
+```
+
+
+## Starting the Server
+
+Execute the following code in your REPL:
+
+```clojure
+(require '[vdd-core.core :as vdd])
+(def server (vdd/start-viz))
+```
+
+Go to [http://localhost:8080](http://localhost:8080) in your web browser.
+
+## Project Layout
+
+Visualizations are defined as folders in a `viz` folder in your project. vdd-core looks for in a top level `viz` folder when it starts up. Any subfolders of `viz` that contain an `index.html` page will be considered a visualization. 
+
+A visualization usually consists of the following files:
+
+  * `index.html` - This will contain the visualization of your code. 
+  * A visualization specific CSS file - Your index file should include this.
+  * A visualization specific JavaScript file - Your index file should include this. This can be either hand written or generated from ClojureScript.
+  * `driver.clj` - Contains code to "drive" the visualization. See the Visualization Driver section below.
+
+### Visualization Driver
+
+Visualizing execution of some code usually requires having some helper code that will invoke the code being tested, capture execution data (See Capturing Code Execution below.), and send the captured data to the visualization. Drivers should be put in a `driver.clj` file in the visualization folder in `viz`. If your visualization is named "qsort" then your folder structure and driver would look like this
+
+  * `my-clojure-project/`
+    * `viz/`
+      * `qsort/`
+          * `index.html`
+          * `qsort.css`
+          * `qsort.js`
+          * `driver.clj`
+
+
+`driver.clj`:
+
+```clojure
+(ns qsort.driver
+  (:require [my-clojure-project.my-code :as my-code]
+            [vdd-core.core :as vdd]
+            [vdd-core.capture-global :as capture]))
+
+(defn test-viz-my-code []
+  ; TODO execute your code and capture data
+
+  ; Then send the captured data to the visualization through websockets.
+  ; Note: You need to have http://localhost:8080/viz/qsort/index.html open in your browser before executing this.
+  (vdd/data->viz data-captured-from-my-code-execution))            
+```
+
+## Capturing Code Execution
+
+VDD Core provides a basic set of functions to capture code execution. For a more robust solution see the [Lamina](https://github.com/ztellman/lamina) project's [Probes and Instrumentation](https://github.com/ztellman/lamina/wiki/Probes-and-Instrumentation) capabilities.
+
+TODO Link to API documentation after we put it on github pages.
+
+Here's an example of capturing code execution and sending it to the visualization
+
+The code in your application:
+```clojure
+```
+
+`driver.clj`:
+```clojure
+```
+
+
+## vdd-core JavaScript
+
+TODO

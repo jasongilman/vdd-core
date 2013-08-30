@@ -2,6 +2,7 @@
 .lein-repl-history
 pom.xml
 .lein-failures
+/doc
 
 /log/*.log
 

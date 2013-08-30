@@ -1,6 +1,6 @@
-(defproject vdd-core "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+(defproject vdd-core "0.1.0"
+  :description "vdd-core is a minimal Clojure library built to help enable Visualization Driven Development (VDD)."
+  :url "https://github.com/Element84/vdd-core"
   :license {:name "MIT"
             :url "http://opensource.org/licenses/MIT"}
   
@@ -26,10 +26,12 @@
                  [clj-http "0.7.6"]
                  ; Testing that includes the filesystem (project-viz)
                  [me.raynes/fs "1.4.5"]]
-  :plugins [[lein-cljsbuild "0.3.2"]]
+  :plugins [[lein-cljsbuild "0.3.2"]
+            [codox "0.6.4"]]
   
-  ; Commented out to increase repl startup speed
-  ; Use lein cljsbuild auto (or once) to compile
+  :codox {:include [vdd-core.core
+                    vdd-core.capture-global]}
+  
   :hooks [leiningen.cljsbuild]
   
   :source-paths ["src/clj"]
