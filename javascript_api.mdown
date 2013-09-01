@@ -1,3 +1,95 @@
-# vdd-core JavaScript API
+## `vdd_core.connection`
 
-This documents the JavaScript API for vdd-core.
+This contains functions for communicating with the visualization server. Communication with the visualization server is over websockets using [WAMP](http://wamp.ws) (Websocket Application Messaging Protocol). The details of using WAMP are handled for you by VDD Core client and server code.
+
+***
+
+### `vdd_core.connection.connect( vizDataHandler_or_channelsToHandlers )`
+
+Creates a websocket connection to the visualization server. Returns a session object that should be passed into the `sendData` function to send data to the server.
+
+#### Arguments
+
+  * `vizDataHandler_or_channelsToHandlers` - This should be either a function that will receive visualization data on the default channel or a JavaScript map of channel names to functions that handle the data.
+
+Normally a single channel is sufficient for communicating visualization data from the server to the browser. Occasionally you may want to open multiple channels. Passing in a map of channel names to separate functions will allow multiple channels. The function passed to `connect` should take two arguments, `topic` and `data`. `topic` will be a string containing the name of the visualization channel. `data` will contain the visualization data sent to the browser.
+
+#### Example
+
+```JavaScript
+var session = nil;
+
+// Handles the visualization data sent from the server.
+function onVizData(topic, data) {
+  console.log("Visualization data received", data);
+  // TODO Display the data.
+}
+
+// Connect using websockets and register callback for visualization data.
+session = vdd_core.connection.connect(onVizData);
+```
+
+***
+
+### `vdd_core.connection.callServerFunction`
+
+Calls a function on the server with some data. This allows making a visualization interactive in that it can drive the code on the server.
+
+#### Arguments
+
+  * `session` - The session object returned when connecting the server.
+  * `server_data_fn` - A string containing the namespace and function to call on server side. ie. 'my-driver/test-code'. This will usually be a function that you define in the visualization driver.
+  * `data` - The data to pass as an argument to the function.
+  * [`options`] - Optional map of options:
+    * `success` - a function to call on success
+    * `error` - a function to call if there's an error.
+
+#### Example
+
+```JavaScript
+// When some button is clicked ...
+$("a#submit-logic-text").click(function (event) {
+  // ... grab the value in a text area 
+  var logicStr = $("textarea")[0].value;
+  // ... and call boolean-logic-simplifiers/test-simplifiers with that data.
+  vdd_core.connection.callServerFunction(session, "boolean-logic-simplifiers.driver/test-simplifiers", logicStr);
+});
+```
+
+***
+
+## `vdd_core.player`
+
+The VDD Core Player translates a list of visualization data into a separate set of "frames" to display to the user as an animation. It presents a set of back, play, pause, forward etc. buttons and a slider on the page. 
+
+### `vdd_core.player.createPlayerFn(el, [ options ])`
+
+This creates a player control within the given on screen element. It returns a function that should be called when the visualization data is sent. The returned function takes two arguments: the array of event data to make playable, and a function that should display each frame of data. If that sounds confusing see the example below and the vdd-core-example project.
+
+#### Arguments
+
+  * `el` - The element to create the player component in
+  * [`options`] - an optional map of options:
+    * `duration` - the time in milliseconds between each frame when playing. Defaults to 200 ms.
+
+#### Example
+
+```JavaScript
+var playerUpdateFn = vdd_core.player.createPlayerFn($("div#player"), {duration: 300});
+
+// Handles receiving visualization data from server.
+function onVizData(topic, eventData) {
+  // Sets the array of data on the player. Registers displayData as the function the player will call with each
+  // "frame" of data.
+  playerUpdateFn(eventData, displayData);
+}
+
+// Connect using the WAMP protocol and register callback for visualization data
+vdd_core.connection.connect(onVizData);
+
+// This is called by the player with each frame of data.
+function displayData(iterationData) {
+  //TODO display one frame's worth of data.
+}
+
+```

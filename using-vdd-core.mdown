@@ -1,20 +1,3 @@
-## Outline
-
-  * Install using the version on the home page by adding it to your project.clj
-  * Starting server in the REPL
-  * Project layout
-    * viz folder
-      * subfolders for each visualization
-      * index.html
-      * css and javascript
-      * driver.clj
-  * Capturing code execution
-    * TODO can we generate documentation?
-  * Javascript code
-    * talk about connecting
-    * using player
-    * TODO we need to create a page for javascript documentation
-
 ## Installation
 
   - Update your `project.clj` file with the version specifed in the [README](https://github.com/jasongilman/vdd-core) as a development dependency.
@@ -84,7 +67,7 @@ Visualizing execution of some code usually requires having some helper code that
 
 ## Capturing Code Execution
 
-VDD Core provides a basic set of functions to capture code execution. For a more robust solution see the [Lamina](https://github.com/ztellman/lamina) project's [Probes and Instrumentation](https://github.com/ztellman/lamina/wiki/Probes-and-Instrumentation) capabilities.
+Representing code execution as data is one the key ways we can visualize it. VDD Core provides a basic set of functions to capture code execution as data. For a more robust solution see the [Lamina](https://github.com/ztellman/lamina) project's [Probes and Instrumentation](https://github.com/ztellman/lamina/wiki/Probes-and-Instrumentation) capabilities.
 
 TODO Link to API documentation after we put it on github pages.
 
@@ -125,7 +108,16 @@ The code in your application:
     (vdd/data->viz captured)))
 ```
 
+## Creating Interactive Visualizations
 
-## vdd-core JavaScript
+Visualizations don't have to be completely passive. They can interact with the server. VDD Core has a utility method that allows execution of arbitrary functions on the server side. 
 
 TODO
+
+  * visualizations can be interactive
+  * The visualization can cause the code to be invoked on the server side
+  * Cover sending data to server
+  * setting up a function on server side to be called
+  * Reference the javascript docs
+
+

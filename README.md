@@ -28,6 +28,8 @@ TODO how do you develop with it
     * manually for now
     * Could we build a set of integration tests that run from within the brower? 
 
+Pull requests and issues are accepted and appreciated.
+
 ### Future
 
 TODO What are new ideas and places it could go in the future? Would this work better as a set of github issues?
