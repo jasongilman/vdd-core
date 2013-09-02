@@ -1,6 +1,7 @@
 (ns vdd-core.core
   (:require [vdd-core.internal.system :as vsystem]
             [clj-wamp.server :as wamp]
+            [clojure.string]
             [taoensso.timbre :as timbre
              :refer (trace debug info warn error fatal spy)]
             [vdd-core.internal.wamp-handler :as wamp-handler]))
@@ -10,8 +11,10 @@
   [{data-handler "fn" data "data"}]
   (info "Received data " data)
   (try 
-    (let [data-handler (resolve (read-string data-handler))]
-      (data-handler data))
+    (let [[handler-ns handler-fn] (clojure.string/split data-handler #"/")]
+      (require (symbol handler-ns))
+      (let [data-handler (resolve (read-string data-handler))]
+        (data-handler data)))
     (catch RuntimeException e
       (error e "Error trying to invoke data handler"))))
 
