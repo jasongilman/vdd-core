@@ -21,7 +21,6 @@
     ; Built in visualizations
     (context "/built-in" [] 
              (routes 
-               (GET "/player-test" [] (views/player-test-page config))
                (GET "/data-viewer" [] (views/data-viewer-page config))))
              
     ;; static files under ./resources/public folder
@@ -30,7 +29,6 @@
     ; Project visualization files
     (route/files "/viz" {:root (:viz-root config)})
     
-    ;; 404, modify for a better 404 page
     (route/not-found "<p>Page not found.</p>")))
 
 (defn wrap-failsafe [handler]
@@ -38,7 +36,6 @@
     (try (handler req)
       (catch Exception e
         (error e "error handling request" req)
-        ;; FIXME provide a better page for 500 here
         {:status 500 :body "Sorry, an error occured."}))))
 
 (defn wrap-dir-index

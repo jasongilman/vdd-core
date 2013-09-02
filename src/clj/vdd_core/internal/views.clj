@@ -18,19 +18,21 @@
       [:span.icon-bar ]
       [:span.icon-bar ]
       [:span.icon-bar ]]
-     [:a {:class "brand" :href "/"} "VDD" ]
+     [:a {:class "brand" :href "/"} "VDD Core" ]
      [:div.nav-collapse.collapse
       [:ul.nav
        [:li.active [:a {:href "/"} "Home"]]
-       [:li [:a {:href "http://visualizationdrivendevelopment.com"} "About"]]
+       [:li [:a {:href "https://github.com/Element84/vdd-core/wiki"} "About"]]
        [:li.dropdown
         [:a {:href "#" :class "dropdown-toggle" :data-toggle "dropdown"} "Visualizations" [:b.caret]]
         [:ul.dropdown-menu
-         [:li.nav-header "Built in" ]
-         (for [{path :path title :title} (:built-in vizs)]
-           [:li [:a {:href path} title]])
-         [:li.divider ]
-         [:li.nav-header "Project" ]
+         (comment 
+           ;; Not supporting built in visualizations yet.
+           [:li.nav-header "Built in" ]
+           (for [{path :path title :title} (:built-in vizs)]
+             [:li [:a {:href path} title]])
+           [:li.divider ]
+           [:li.nav-header "Project" ])
          (for [{path :path title :title} (:project vizs)]
            [:li [:a {:href path} title]])]]]]]]])
 
@@ -52,7 +54,7 @@
   [:div.container
     [:footer 
      [:hr]
-     [:p "&copy; Jason Gilman 2013"]]])
+     [:p "&copy; Jason Gilman and element 84 2013"]]])
 
 (defn- vdd-page 
   "Creates a visualization page taking the page title, the vizs to link to in the
@@ -72,8 +74,7 @@
           javascripts))))
 
 (defn- visualizations [config]
-  {:built-in [{:path "/built-in/data-viewer" :title "Data Viewer"}
-              {:path "/built-in/player-test" :title "Player Test"}]
+  {:built-in [{:path "/built-in/data-viewer" :title "Data Viewer"}]
    :project (project-viz/project-visualizations config)})
 
 (defn list-views-page
@@ -83,13 +84,11 @@
         viz-link-fn (fn [{path :path title :title}]
                       [:a.btn.btn-large.span5 {:href path} title])]
     (vdd-page :title "Visualization Driven Development - Core"
-              :viz vizs
+              :vizs vizs
               :content [:div.container 
-                        [:div.hero-unit
-                         [:h1 "Visualization Driven Development"]
-                         [:p "TODO description here"]]
                         [:div.row
-                         [:div.span6
+                         ;; Not support built in visualizations for now as I'm not happy with the quality of them.
+                         #_[:div.span6
                           [:h3 "Built In Visualizations"]
                           (for [viz (:built-in vizs)]
                             (viz-link-fn viz))]
@@ -112,16 +111,3 @@
               :javascripts [(javascript-tag "$(function() { 
                                             vdd.data.enableDataView($('div#target')); 
                                             });")])))
-
-(defn player-test-page
-  "Creates a temporary page for testing the player component"
-  [config]
-  (let [vizs (visualizations config)]
-    (vdd-page :title "VDD - Player Test Page"
-              :vizs vizs
-              :content [:div.container
-                        [:h1 "Player test"]
-                        [:p#target "testing"]
-                        [:div#player]]
-              :javascripts [(include-js "/vdd/player-test.js")])))
-
