@@ -2,10 +2,6 @@
   (:require [taoensso.timbre :as timbre :refer (debug)]
             [vdd-core.core]))
 
-
-; This is global mutable state. Not ideal. 
-; This could be refactored later to allow storage of captured data 
-; for various purposes
 (def ^:private _captured (atom []))
 
 (def enabled (atom false))

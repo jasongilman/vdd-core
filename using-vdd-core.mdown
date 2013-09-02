@@ -1,18 +1,16 @@
 ## Installation
 
-  - Update your `project.clj` file with the version specifed in the [README](https://github.com/jasongilman/vdd-core) as a development dependency.
+  - Update your `project.clj` file with the version specifed in the [README](https://github.com/jasongilman/vdd-core) as a dependency.
   - Add `viz` to the source path in the development profile.
 
 An excerpt of the `:profiles` in your `project.clj` might look like the following:
 
 ```clojure
-  :profiles {:dev {:dependencies [[ 
-                                  ; Added vdd-core as a development dependency. Make sure to get latest version.
-                                  [vdd-core "0.1.0"]]
-                   ; Add viz as a source path to load visualization drivers
-                   :source-paths ["viz"]}}
-```
+  :dependencies [[vdd-core "0.1.0"]]
 
+  ;; Add viz as a source path to load visualizations.
+  :profiles {:dev {:source-paths ["viz"]}}
+```
 
 ## Starting the Server
 
@@ -24,6 +22,10 @@ Execute the following code in your REPL:
 ```
 
 Go to [http://localhost:8080](http://localhost:8080) in your web browser.
+
+## Development Mode Only!
+
+**Important Note:** VDD Core is designed to be used during active development. It should **not** be used either as a production server or started on an open port. It allows arbitrary execution of server side code from the browser as part of its goal to aid in testing.
 
 ## Project Layout
 
@@ -110,14 +112,8 @@ The code in your application:
 
 ## Creating Interactive Visualizations
 
-Visualizations don't have to be completely passive. They can interact with the server. VDD Core has a utility method that allows execution of arbitrary functions on the server side. 
+Visualizations don't have to be completely passive. They can interact with the server. VDD Core allows creation of visualizations that are both testing tools and visualizations. You can create an interactive visualization by following these steps:
 
-TODO
-
-  * visualizations can be interactive
-  * The visualization can cause the code to be invoked on the server side
-  * Cover sending data to server
-  * setting up a function on server side to be called
-  * Reference the javascript docs
-
-
+  - Add a function in your driver that will call the code being tested and send any captured data to the visualization. You probably already have a function like this defined for testing from the REPL.
+  - Add appropriate HTML controls to enter test data in the visualization. 
+  - Add a submit button with JavaScript handler. In the button handler use the [`vdd_core.connection.callServerFunction`](https://github.com/jasongilman/vdd-core/wiki/JavaScript-API#vdd_coreconnectioncallserverfunction) to call the function defined in your driver. See that functions documentation for more details and some example code.
