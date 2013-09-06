@@ -4,7 +4,7 @@ VDD Core is a minimal Clojure library built to help enable Visualization Driven 
 
 ## Examples
 
-The [vdd-core-examples](https://github.com/Element84/vdd-core-examples) (TODO make sure this link works) project has several examples of using vdd-core. 
+The [vdd-core-examples](https://github.com/Element84/vdd-core-examples) (TODO make sure this link works) project has several examples of using vdd-core.
 
 ## Installation
 
@@ -15,21 +15,6 @@ Add the following dependency to your `project.clj` file:
 ## Using VDD Core
 
 See [Using VDD Core](https://github.com/jasongilman/vdd-core/wiki/Using-VDD-Core)
-
-## Development
-
-TODO how do you develop with it
-
-  * How do you run tests?
-  * How do you integration test it?
-    * manually for now
-    * Could we build a set of integration tests that run from within the brower? 
-
-Pull requests and issues are accepted and appreciated.
-
-### Future
-
-TODO What are new ideas and places it could go in the future? Would this work better as a set of github issues?
 
 ## License
 
